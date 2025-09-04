@@ -1,21 +1,21 @@
 import React from "react";
-import Navbar from "./components/Navbar";   // your navbar
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import Home from "./pages/Home";
 import MedicineSearch from "./components/MedicineSearch";
 
 function App() {
   return (
-    <div>
-      {/* Navbar stays on top */}
+    <Router>
       <Navbar />
+      <Routes>
+        {/* Home Page */}
+        <Route path="/" element={<Home />} />
 
-      {/* Main content */}
-      <div style={{ padding: "30px" }}>
-        <h2 style={{ fontFamily: "'Kreon', serif", marginBottom: "20px" }}>
-          🔍 Search Medicines
-        </h2>
-        <MedicineSearch />
-      </div>
-    </div>
+        {/* Direct Medicine Search Page (optional) */}
+        <Route path="/search" element={<MedicineSearch />} />
+      </Routes>
+    </Router>
   );
 }
 

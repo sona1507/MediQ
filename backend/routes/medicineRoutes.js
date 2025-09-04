@@ -19,36 +19,15 @@ router.post("/", async (req, res) => {
 
 /**
  * @route   GET /api/medicines
- * @desc    Get all medicines
+ * @desc    Get all medicines (optionally filter by name, category, or symptom)
  */
 router.get("/", async (req, res) => {
   try {
-    const medicines = await Medicine.find();
-    res.json(medicines);
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
-  }
-});
-
-/**
- * @route   GET /api/medicines/search
- * @desc    Search medicines by name, category, or symptoms/disease
- */
-router.get("/search", async (req, res) => {
-  try {
     const { name, category, symptom } = req.query;
-
-    const query = {};
-
-    if (name) {
-      query.name = { $regex: name, $options: "i" }; // case insensitive search
-    }
-    if (category) {
-      query.category = { $regex: category, $options: "i" };
-    }
-    if (symptom) {
-      query.symptoms = { $regex: symptom, $options: "i" };
-    }
+    let query = {};
+    if (name) query.name = { $regex: name, $options: "i" };
+    if (category) query.category = { $regex: category, $options: "i" };
+    if (symptom) query.symptoms = { $regex: symptom, $options: "i" };
 
     const medicines = await Medicine.find(query);
     res.json(medicines);
@@ -56,7 +35,35 @@ router.get("/search", async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
-// DELETE all medicines
+
+/**
+ * @route   GET /api/medicines/search?q=
+ * @desc    Search medicines by name, category, or symptoms
+ */
+router.get("/search", async (req, res) => {
+  try {
+    const query = req.query.q?.trim() || "";
+    if (!query) return res.json([]); // return empty array if input is empty
+
+    const medicines = await Medicine.find({
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { category: { $regex: query, $options: "i" } },
+        { symptoms: { $regex: query, $options: "i" } },
+      ],
+    });
+
+    res.json(medicines);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+
+/**
+ * @route   DELETE /api/medicines
+ * @desc    Delete all medicines
+ */
 router.delete("/", async (req, res) => {
   try {
     await Medicine.deleteMany({});
@@ -65,6 +72,11 @@ router.delete("/", async (req, res) => {
     res.status(500).json({ error: "Failed to delete medicines" });
   }
 });
+
+/**
+ * @route   DELETE /api/medicines/:id
+ * @desc    Delete a medicine by ID
+ */
 router.delete("/:id", async (req, res) => {
   try {
     await Medicine.findByIdAndDelete(req.params.id);
@@ -73,57 +85,22 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: "Failed to delete medicine" });
   }
 });
-// POST /api/medicines/byIds  { ids: ["...", "..."] }
+
+/**
+ * @route   POST /api/medicines/byIds
+ * @desc    Fetch multiple medicines by IDs
+ */
 router.post("/byIds", async (req, res) => {
   try {
     const { ids } = req.body;
-    if (!Array.isArray(ids) || ids.length === 0)
+    if (!Array.isArray(ids) || ids.length === 0) {
       return res.status(400).json({ message: "ids array required" });
+    }
     const meds = await Medicine.find({ _id: { $in: ids } });
     res.json(meds);
-  } catch (e) {
-    res.status(500).json({ message: e.message });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
-router.get("/", async (req, res) => {
-  try {
-    const { name, category, symptom } = req.query;
-
-    let query = {};
-    if (name) query.name = { $regex: name, $options: "i" };
-    if (category) query.category = category;
-    if (symptom) query.symptom = symptom;
-
-    const medicines = await Medicine.find(query);
-    res.json(medicines);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-// GET /api/medicines/search
-// GET /api/medicines/search?q=...
-router.get("/search", async (req, res) => {
-  try {
-    const { q } = req.query;
-    if (!q) return res.json([]);
-
-    const medicines = await Medicine.find({
-      $or: [
-        { name: { $regex: q, $options: "i" } },
-        { category: { $regex: q, $options: "i" } },
-        { symptoms: { $regex: q, $options: "i" } },
-      ],
-    }).limit(10);
-
-    res.json(medicines);
-  } catch (err) {
-    res.status(500).json({ message: "Error searching medicines" });
-  }
-});
-
-
-
-
-
 
 export default router;
