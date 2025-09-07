@@ -10,6 +10,8 @@ import medicineRoutes from "./routes/medicineRoutes.js";
 import incidencesRoutes from "./routes/incidencesRoutes.js";
 import prescriptionRoutes from "./routes/prescriptionRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+
 
 
 // Load environment variables
@@ -18,8 +20,17 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
+
+
+// Allow only your frontend origin and enable credentials
+app.use(cors({
+  origin: "http://localhost:3002", // your React frontend URL
+  credentials: true,               // allow cookies
+}));
+
+
 
 // Ensure uploads folder exists
 const UPLOAD_DIR = path.join(process.cwd(), "uploads", "prescriptions");
@@ -28,7 +39,7 @@ fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 // Serve uploaded files statically
 app.use("/uploads", express.static("uploads"));
 app.use("/api/orders", orderRoutes);
-
+app.use("/api/auth", authRoutes);
 
 // MongoDB connection
 mongoose
@@ -57,4 +68,9 @@ app.listen(PORT, () => {
 app.get("/api/medicines", async (req, res) => {
   const medicines = await Medicine.find();
   res.json(medicines);
+});
+
+app.post("/api/auth/register-test", (req, res) => {
+  console.log(req.body);
+  res.json({ message: "Test route working", data: req.body });
 });

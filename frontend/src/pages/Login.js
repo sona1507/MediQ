@@ -1,62 +1,70 @@
-// import React, { useState } from "react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../api/axios";
+import "./Login.css";
 
-// function Login() {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
+function Login() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
 
-//   const handleLogin = (e) => {
-//     e.preventDefault();
-//     console.log("Login attempt:", { email, password });
-//     alert("✅ Login button clicked!");
-//   };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-//   return (
-//     <div style={{
-//       display: "flex",
-//       justifyContent: "center",
-//       alignItems: "center",
-//       minHeight: "80vh",
-//       backgroundColor: "#f9f9f9",
-//     }}>
-//       <form onSubmit={handleLogin} style={{
-//         background: "white",
-//         padding: "30px",
-//         borderRadius: "12px",
-//         boxShadow: "0px 4px 12px rgba(0,0,0,0.1)",
-//         width: "350px",
-//       }}>
-//         <h2 style={{ textAlign: "center", color: "#007bff" }}>Login</h2>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
 
-//         <input
-//           type="email"
-//           placeholder="Email"
-//           value={email}
-//           onChange={(e) => setEmail(e.target.value)}
-//           required
-//           style={{ width: "100%", padding: "12px", margin: "10px 0",
-//             borderRadius: "8px", border: "1px solid #ddd" }}
-//         />
+      console.log("Attempting login with:", formData);
 
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//           required
-//           style={{ width: "100%", padding: "12px", margin: "10px 0",
-//             borderRadius: "8px", border: "1px solid #ddd" }}
-//         />
+      const res = await api.post("/auth/login", formData);
+      console.log("Login successful:", res.data);
+      alert(res.data.message);
 
-//         <button type="submit" style={{
-//           width: "100%", padding: "12px", marginTop: "10px",
-//           borderRadius: "8px", border: "none",
-//           backgroundColor: "#007bff", color: "white", fontSize: "16px"
-//         }}>
-//           Login
-//         </button>
-//       </form>
-//     </div>
-//   );
-// }
+      // Redirect after login
+      navigate("/dashboard"); // or wherever you want
+    } catch (err) {
+      console.error("Login error:", err.response?.data || err.message);
+      alert(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-// export default Login;
+  return (
+    <div className="auth-container">
+      <form className="auth-form" onSubmit={handleSubmit}>
+        <h2>Login</h2>
+        <input
+          type="email"
+          name="email"
+          placeholder="Email Address"
+          value={formData.email}
+          onChange={handleChange}
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formData.password}
+          onChange={handleChange}
+          required
+        />
+        <button type="submit" className="auth-btn" disabled={loading}>
+          {loading ? "Logging in..." : "Login"}
+        </button>
+        <p className="auth-text">
+          Don't have an account? <Link to="/register">Register here</Link>
+        </p>
+      </form>
+    </div>
+  );
+}
+
+export default Login;

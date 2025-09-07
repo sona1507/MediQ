@@ -27,6 +27,13 @@ const medicineSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    dosage: {
+      type: String, // e.g. "1 tablet twice daily"
+    },
+    prescriptionRequired: {
+      type: String, // e.g. "Required" or "Not Required"
+      default: "Not Required",
+    },
   },
   { timestamps: true }
 );
