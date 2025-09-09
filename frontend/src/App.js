@@ -5,6 +5,8 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import MedicineSearch from "./components/MedicineSearch";
+import "./App.css";      // ✅ global styles
+import "./index.css";   // ✅ optional reset/global tweaks
 
 function App() {
   return (

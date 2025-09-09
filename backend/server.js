@@ -26,9 +26,10 @@ app.use(express.json());
 
 // Allow only your frontend origin and enable credentials
 app.use(cors({
-  origin: "http://localhost:3002", // your React frontend URL
-  credentials: true,               // allow cookies
+  origin: ["http://localhost:3000", "http://localhost:3002"], // allow both ports
+  credentials: true,
 }));
+
 
 
 

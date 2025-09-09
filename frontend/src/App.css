@@ -1,44 +1,284 @@
-.App {
-  text-align: center;
+/* ===============================
+   GLOBAL STYLES
+================================= */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* ===============================
+   NAVBAR
+================================= */
+.navbar {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  padding: 12px 20px;
+  background-color: #007bff;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  font-size: 22px;
+  font-weight: bold;
+  flex-grow: 1;   /* takes all free space on the left */
 }
-.brand-text {
-  font-family: system-ui;
-  font-size: 2.3rem;
+
+.navbar .nav-links {
+  display: flex;
+  gap: 25px;
+  list-style: none;
+  margin: 0;
+  margin-left: auto;   /* ✅ pushes nav links to the right */
+  align-items: center; /* vertically centers them */
+}
+
+.navbar .nav-links a {
+  color: rgb(52, 21, 21);                 /* text color */
+  font-weight: 500;
+  padding: 8px 15px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.navbar .nav-links a:hover {
+  background-color: #0056b3;    /* darker blue on hover */
+  color: #fff;
+}
+
+/* Special style for Login button */
+.navbar .nav-links .login-btn {
+  background-color: #28a745;    /* green button */
+  color: white;
+  border-radius: 20px;          /* pill shape */
+  padding: 6px 18px;
   font-weight: 600;
 }
 
+.navbar .nav-links .login-btn:hover {
+  background-color: #218838;
+}
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+
+/* ===============================
+   HOME PAGE
+================================= */
+.hero {
+  text-align: center;
+  padding: 80px 20px;
+  color: white;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+}
+
+.hero .brand {
+  color: #ffcc00;
+}
+
+.features {
+  display: flex;
+  justify-content: space-around;
+  padding: 40px 20px;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.feature-card {
+  flex: 1;
+  min-width: 250px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.quick-links {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin: 40px 0;
+  flex-wrap: wrap;
+}
+
+.link-btn {
+  padding: 12px 20px;
+  border-radius: 6px;
+  background-color: #007bff;
+  color: white;
+  font-weight: 500;
+  transition: 0.3s;
+}
+
+.link-btn:hover {
+  background-color: #0056b3;
+}
+
+/* ===============================
+   AUTH PAGES (Login / Register)
+================================= */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.auth-form {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.auth-form input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 6px;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+.auth-btn:hover {
+  background-color: #0056b3;
+}
+
+.auth-text {
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* ===============================
+   MEDICINES PAGE
+================================= */
+.medicines-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.medicines-list li {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* ===============================
+   RESPONSIVE RULES
+================================= */
+@media (max-width: 768px) {
+  .navbar .nav-links {
+    display: none; /* Mobile menu can be added later */
   }
-  to {
-    transform: rotate(360deg);
+
+  .hero h1 {
+    font-size: 1.8rem;
+  }
+
+  .features {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .quick-links {
+    flex-direction: column;
+  }
+
+  .auth-form {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero {
+    padding: 50px 15px;
+  }
+
+  .hero h1 {
+    font-size: 1.5rem;
+  }
+
+  .feature-card {
+    min-width: 100%;
+  }
+}
+/* ===============================
+   NAVBAR RESPONSIVE HAMBURGER
+================================= */
+.hamburger {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 65px;
+    right: 20px;
+    background: #007bff;
+    padding: 15px;
+    border-radius: 8px;
+    width: 200px;
+    text-align: right;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links li {
+    margin: 10px 0;
+  }
+
+  .nav-links a {
+    color: white;
+    font-size: 16px;
+    font-weight: 500;
   }
 }
