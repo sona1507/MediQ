@@ -60,6 +60,37 @@ button {
   color: #fff;
 }
 
+/* Hide nav links on small screens */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    position: absolute;
+    top: 60px; /* below navbar */
+    right: 20px;
+    background: #007bff;
+    padding: 15px 20px;
+    border-radius: 8px;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: block;
+    font-size: 26px;
+    cursor: pointer;
+  }
+}
+
+/* By default, hide the menu toggle on desktop */
+.menu-toggle {
+  display: none;
+}
+
+
 /* Special style for Login button */
 .navbar .nav-links .login-btn {
   background-color: #28a745;    /* green button */
