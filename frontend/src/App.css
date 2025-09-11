@@ -1,107 +1,214 @@
 /* ===============================
-   GLOBAL STYLES
+   GLOBAL
 ================================= */
+:root {
+  --main-navbar-height: 56px; /* Reduced from 70px */
+}
+
 body {
   margin: 0;
+  padding-top: calc(var(--main-navbar-height) + 60px); /* 60px ≈ category navbar height */
   font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   background-color: #f9f9f9;
   color: #333;
 }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  outline: none;
-}
 
 /* ===============================
-   NAVBAR
+   TOP NAVBAR
 ================================= */
 .navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: var(--main-navbar-height);
+  z-index: 1200;
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  justify-content: space-between;
   background-color: #007bff;
-  color: white;
+  color: #fff;
+  padding: 8px 20px;
+  box-sizing: border-box;
+  font-size: 16px;
 }
 
-.navbar .logo {
-  display: flex;
-  align-items: center;
-  font-size: 22px;
-  font-weight: bold;
-  flex-grow: 1;   /* takes all free space on the left */
-}
-
-.navbar .nav-links {
-  display: flex;
-  gap: 25px;
-  list-style: none;
-  margin: 0;
-  margin-left: auto;   /* ✅ pushes nav links to the right */
-  align-items: center; /* vertically centers them */
-}
-
-.navbar .nav-links a {
-  color: rgb(52, 21, 21);                 /* text color */
-  font-weight: 500;
-  padding: 8px 15px;
-  border-radius: 6px;
-  transition: all 0.3s ease;
-}
-
-.navbar .nav-links a:hover {
-  background-color: #0056b3;    /* darker blue on hover */
+.navbar .navbar-brand {
+  font-size: 20px;
+  font-weight: 700;
   color: #fff;
 }
 
-/* Hide nav links on small screens */
-@media (max-width: 768px) {
-  .nav-links {
-    display: none;
-    flex-direction: column;
-    gap: 15px;
-    position: absolute;
-    top: 60px; /* below navbar */
-    right: 20px;
-    background: #007bff;
-    padding: 15px 20px;
-    border-radius: 8px;
-  }
-
-  .nav-links.open {
-    display: flex;
-  }
-
-  .menu-toggle {
-    display: block;
-    font-size: 26px;
-    cursor: pointer;
-  }
+.navbar .navbar-collapse {
+  justify-content: flex-end;
 }
 
-/* By default, hide the menu toggle on desktop */
-.menu-toggle {
+.navbar .nav-link {
+  color: #333 !important;
+  font-weight: 500;
+  transition: color 0.2s ease-in-out;
+}
+
+.navbar .nav-link:hover {
+  color: #007bff !important;
+}
+
+
+/* ===============================
+   SEARCH BAR STYLES
+================================= */
+.search-bar-container {
+  background: #f9fbff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  max-width: 600px;
+  margin: 40px auto;
+  text-align: center;
+  transition: all 0.4s ease-in-out;
+}
+
+.search-bar-container h2 {
+  font-size: 22px;
+  margin-bottom: 12px;
+  color: #007bff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.search-bar-container input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #007bff;
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.search-bar-container input:focus {
+  border-color: #0056b3;
+}
+
+/* Compact version when scrolled into navbar */
+.search-bar-container.compact {
+  position: relative;
+  transform: none;
+  width: 100%;
+  max-width: 600px;
+  padding: 0;
+  margin-left: 20px;
+  box-shadow: none;
+  z-index: auto;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.search-bar-container.compact h2 {
   display: none;
 }
 
-
-/* Special style for Login button */
-.navbar .nav-links .login-btn {
-  background-color: #28a745;    /* green button */
-  color: white;
-  border-radius: 20px;          /* pill shape */
-  padding: 6px 18px;
-  font-weight: 600;
+.search-bar-container.compact input {
+  flex-grow: 1;
+  padding: 8px 14px;
+  font-size: 15px;
+  border: 1px solid #007bff;
+  border-radius: 6px 0 0 6px;
 }
 
-.navbar .nav-links .login-btn:hover {
-  background-color: #218838;
+.search-bar-container.compact button {
+  padding: 8px 18px;
+  border-radius: 0 6px 6px 0;
+  font-weight: 500;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.search-bar-container.compact button:hover {
+  background-color: #0056b3;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+
+/* ======= Category Navbar Custom Style (fixed under main navbar) ======= */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+
+:root {
+  --main-navbar-height: 70px;   /* match .navbar height */
+}
+
+.category-navbar {
+  position: fixed;              /* ✅ fixed instead of sticky */
+  top: var(--main-navbar-height);
+  left: 0;
+  width: 100%;
+  z-index: 999;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5e5e5;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.category-navbar .nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 60px;        /* space between menu items */
+  padding: 18px 0;  /* vertical padding */
+  margin: 0;
+  list-style: none;
+}
+
+.category-navbar .nav-link {
+  font-family: 'Poppins', sans-serif;
+  font-size: 17px;
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.25s ease;
+}
+
+.category-navbar .nav-link:hover {
+  color: #0d6efd;
+}
+
+.category-navbar .nav-link::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #0d6efd;
+  transition: width 0.3s ease;
+}
+
+.category-navbar .nav-link:hover::after {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .category-navbar .nav {
+    flex-wrap: wrap;
+    gap: 25px;
+    padding: 12px 0;
+  }
+  .category-navbar .nav-link {
+    font-size: 15px;
+  }
 }
 
 
@@ -165,8 +272,9 @@ button {
   background-color: #0056b3;
 }
 
+
 /* ===============================
-   AUTH PAGES (Login / Register)
+   AUTH PAGES
 ================================= */
 .auth-container {
   display: flex;
@@ -216,6 +324,7 @@ button {
   margin-top: 12px;
 }
 
+
 /* ===============================
    MEDICINES PAGE
 ================================= */
@@ -233,12 +342,24 @@ button {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
+
 /* ===============================
-   RESPONSIVE RULES
+   RESPONSIVE
 ================================= */
 @media (max-width: 768px) {
   .navbar .nav-links {
-    display: none; /* Mobile menu can be added later */
+    display: none;
+  }
+
+  .category-navbar .nav {
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 10px;
+  }
+
+  .category-navbar .nav-link {
+    font-size: 14px;
+    padding: 6px 8px;
   }
 
   .hero h1 {
@@ -257,59 +378,31 @@ button {
   .auth-form {
     padding: 20px;
   }
-}
 
-@media (max-width: 480px) {
-  .hero {
-    padding: 50px 15px;
+  .search-bar-container {
+    margin: 20px;
+    padding: 16px;
   }
 
-  .hero h1 {
-    font-size: 1.5rem;
-  }
-
-  .feature-card {
-    min-width: 100%;
-  }
-}
-/* ===============================
-   NAVBAR RESPONSIVE HAMBURGER
-================================= */
-.hamburger {
-  display: none;
-  font-size: 28px;
-  cursor: pointer;
-}
-
-@media (max-width: 768px) {
-  .hamburger {
-    display: block;
-  }
-
-  .nav-links {
-    display: none;
+  .search-bar-container.compact {
+    margin: 10px;
+    padding: 10px;
     flex-direction: column;
-    position: absolute;
-    top: 65px;
-    right: 20px;
-    background: #007bff;
-    padding: 15px;
-    border-radius: 8px;
-    width: 200px;
-    text-align: right;
   }
 
-  .nav-links.open {
-    display: flex;
+  .search-bar-container.compact input {
+    font-size: 14px;
+    padding: 8px 12px;
   }
 
-  .nav-links li {
-    margin: 10px 0;
-  }
-
-  .nav-links a {
-    color: white;
-    font-size: 16px;
-    font-weight: 500;
+  .search-bar-container.compact button {
+    margin-top: 8px;
+    width: 100%;
+    border-radius: 6px;
   }
 }
+.category-navbar.scrolled {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 12px 0;
+}
+

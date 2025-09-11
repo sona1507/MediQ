@@ -12,66 +12,58 @@ import prescriptionRoutes from "./routes/prescriptionRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 
-
-
 // Load environment variables
 dotenv.config();
 
 const app = express();
 
+// ===============================
 // Middleware
-// app.use(cors());
+// ===============================
 app.use(express.json());
 
-
-// Allow only your frontend origin and enable credentials
+// ✅ CORS setup: allow both frontend ports
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:3002"], // allow both ports
+  origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
   credentials: true,
 }));
 
-
-
-
-// Ensure uploads folder exists
+// ✅ Ensure uploads folder exists
 const UPLOAD_DIR = path.join(process.cwd(), "uploads", "prescriptions");
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
-// Serve uploaded files statically
+// ✅ Serve uploaded files statically
 app.use("/uploads", express.static("uploads"));
+
+// ===============================
+// Routes
+// ===============================
 app.use("/api/orders", orderRoutes);
 app.use("/api/auth", authRoutes);
-
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI_ATLAS, {
-    // useNewUrlParser and useUnifiedTopology are no longer required in Mongoose v7+
-  })
-  .then(() => console.log("✅ MongoDB connected successfully"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
-
-// Base route
-app.get("/", (req, res) => {
-  res.send("🩺 MediQ Backend is running...");
-});
-
-// API routes
 app.use("/api/medicines", medicineRoutes);
 app.use("/api/incidences", incidencesRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 
-// Server listener
+// ✅ Base route
+app.get("/", (req, res) => {
+  res.send("🩺 MediQ Backend is running...");
+});
+
+// ===============================
+// MongoDB Connection
+// ===============================
+mongoose
+  .connect(process.env.MONGO_URI_ATLAS, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("✅ MongoDB connected successfully"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
+
+// ===============================
+// Server Listener
+// ===============================
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
-});
-// server.js or routes/medicineRoutes.js
-app.get("/api/medicines", async (req, res) => {
-  const medicines = await Medicine.find();
-  res.json(medicines);
-});
-
-app.post("/api/auth/register-test", (req, res) => {
-  console.log(req.body);
-  res.json({ message: "Test route working", data: req.body });
 });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api/axios"; // uses your configured Axios instance
 
 function MedicineSearch() {
   const [query, setQuery] = useState("");
@@ -8,18 +8,22 @@ function MedicineSearch() {
 
   // Fetch suggestions dynamically
   useEffect(() => {
-    if (query.length > 0) {
-      axios
-        .get("http://localhost:5000/api/medicines/search", {
-          params: { q: query },
-        })
-        .then((res) => {
+    const fetchSuggestions = async () => {
+      try {
+        if (query.trim().length > 0) {
+          const res = await api.get("/medicines/search", {
+            params: { q: query },
+          });
           setSuggestions(res.data);
-        })
-        .catch((err) => console.error(err));
-    } else {
-      setSuggestions([]);
-    }
+        } else {
+          setSuggestions([]);
+        }
+      } catch (err) {
+        console.error("Search error:", err.message);
+      }
+    };
+
+    fetchSuggestions();
   }, [query]);
 
   const handleSelect = (medicine) => {
@@ -54,9 +58,11 @@ function MedicineSearch() {
       <div style={{ position: "relative", marginBottom: "20px" }}>
         <input
           type="text"
+          name="medicineSearch"
           placeholder="Search by name, category, or symptom..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          autoComplete="off"
           style={{
             width: "100%",
             padding: "12px 15px",
@@ -142,7 +148,7 @@ function MedicineSearch() {
           </p>
           <p>{selectedMedicine.description}</p>
           <p>
-            <strong>Price:</strong> {selectedMedicine.price}₹
+            <strong>Price:</strong> ₹{selectedMedicine.price}
           </p>
         </div>
       )}

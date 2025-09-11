@@ -6,31 +6,28 @@ function MedicineSearch() {
   const [suggestions, setSuggestions] = useState([]);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
 
-  // Fetch medicines only when user types
+  // Debounce search to reduce API calls
   useEffect(() => {
-    if (!query) {
-      setSuggestions([]); // clear suggestions when input is empty
-      return;
-    }
+    const delayDebounce = setTimeout(() => {
+      if (!query) return setSuggestions([]);
+      const fetchData = async () => {
+        try {
+          const res = await axios.get("/api/medicines/search", { params: { q: query }, });
+          setSuggestions(res.data);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchData();
+    }, 300); // 300ms debounce
 
-    const fetchData = async () => {
-      try {
-        const res = await axios.get("http://localhost:5000/api/medicines/search", {
-          params: { q: query },
-        });
-        setSuggestions(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
-    fetchData();
+    return () => clearTimeout(delayDebounce);
   }, [query]);
 
   const handleSelect = (medicine) => {
     setSelectedMedicine(medicine);
-    setQuery(medicine.name); // autofill input
-    setSuggestions([]); // hide suggestions
+    setQuery(medicine.name);
+    setSuggestions([]);
   };
 
   return (
@@ -45,6 +42,7 @@ function MedicineSearch() {
           placeholder="Search by name, category, or symptom..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          autoComplete="off"
           style={{
             width: "100%",
             padding: "12px 15px",

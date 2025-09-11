@@ -28,24 +28,26 @@ function Login() {
     <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
       <div className="card shadow p-4 w-100" style={{ maxWidth: "400px" }}>
         <h2 className="text-center mb-4">Login</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} autoComplete="on">
           <input
             type="email"
+            name="email"
             className="form-control mb-3"
             placeholder="Email Address"
-            name="email"
             value={formData.email}
             onChange={handleChange}
             required
+            autoComplete="email"
           />
           <input
             type="password"
+            name="password"
             className="form-control mb-3"
             placeholder="Password"
-            name="password"
             value={formData.password}
             onChange={handleChange}
             required
+            autoComplete="current-password"
           />
           <button className="btn btn-primary w-100 mb-3" disabled={loading}>
             {loading ? "Logging in..." : "Login"}

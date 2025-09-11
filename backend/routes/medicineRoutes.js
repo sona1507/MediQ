@@ -5,7 +5,7 @@ const router = express.Router();
 
 /**
  * @route   POST /api/medicines
- * @desc    Add new medicine
+ * @desc    Add a new medicine
  */
 router.post("/", async (req, res) => {
   try {
@@ -13,18 +13,19 @@ router.post("/", async (req, res) => {
     await newMedicine.save();
     res.status(201).json(newMedicine);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Failed to add medicine", error: error.message });
   }
 });
 
 /**
  * @route   GET /api/medicines
- * @desc    Get all medicines (optionally filter by name, category, or symptom)
+ * @desc    Get all medicines (optional filters: name, category, symptom)
  */
 router.get("/", async (req, res) => {
   try {
     const { name, category, symptom } = req.query;
     let query = {};
+
     if (name) query.name = { $regex: name, $options: "i" };
     if (category) query.category = { $regex: category, $options: "i" };
     if (symptom) query.symptoms = { $regex: symptom, $options: "i" };
@@ -32,7 +33,7 @@ router.get("/", async (req, res) => {
     const medicines = await Medicine.find(query);
     res.json(medicines);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Failed to fetch medicines", error: error.message });
   }
 });
 
@@ -43,7 +44,7 @@ router.get("/", async (req, res) => {
 router.get("/search", async (req, res) => {
   try {
     const query = req.query.q?.trim() || "";
-    if (!query) return res.json([]); // return empty array if input is empty
+    if (!query) return res.json([]);
 
     const medicines = await Medicine.find({
       $or: [
@@ -51,12 +52,12 @@ router.get("/search", async (req, res) => {
         { category: { $regex: query, $options: "i" } },
         { symptoms: { $regex: query, $options: "i" } },
       ],
-    });
+    }).limit(20); // limit to 20 results for performance
 
     res.json(medicines);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: "Search failed", error: error.message });
   }
 });
 
@@ -69,20 +70,21 @@ router.delete("/", async (req, res) => {
     await Medicine.deleteMany({});
     res.status(200).json({ message: "All medicines deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete medicines" });
+    res.status(500).json({ message: "Failed to delete medicines", error: error.message });
   }
 });
 
 /**
  * @route   DELETE /api/medicines/:id
- * @desc    Delete a medicine by ID
+ * @desc    Delete a single medicine by ID
  */
 router.delete("/:id", async (req, res) => {
   try {
-    await Medicine.findByIdAndDelete(req.params.id);
+    const deleted = await Medicine.findByIdAndDelete(req.params.id);
+    if (!deleted) return res.status(404).json({ message: "Medicine not found" });
     res.status(200).json({ message: "Medicine deleted successfully" });
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete medicine" });
+    res.status(500).json({ message: "Failed to delete medicine", error: error.message });
   }
 });
 
@@ -94,12 +96,12 @@ router.post("/byIds", async (req, res) => {
   try {
     const { ids } = req.body;
     if (!Array.isArray(ids) || ids.length === 0) {
-      return res.status(400).json({ message: "ids array required" });
+      return res.status(400).json({ message: "ids array is required" });
     }
-    const meds = await Medicine.find({ _id: { $in: ids } });
-    res.json(meds);
+    const medicines = await Medicine.find({ _id: { $in: ids } });
+    res.json(medicines);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: "Failed to fetch medicines", error: error.message });
   }
 });
 

@@ -1,28 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import CategoryNavbar from "./components/CategoryNavbar";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import MedicineSearch from "./components/MedicineSearch";
-import "./App.css";      // ✅ global styles
-import "./index.css";   // ✅ optional reset/global tweaks
+import "./App.css";
+import "./index.css";
 
-function App() {
+export default function App() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 100);
+    };
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const navbar = document.querySelector(".navbar");
+    if (navbar) {
+      const h = navbar.offsetHeight;
+      document.documentElement.style.setProperty("--main-navbar-height", `${h}px`);
+    }
+  }, []);
+
   return (
     <Router>
-      <Navbar />
+      <Navbar scrolled={scrolled} />
+<CategoryNavbar scrolled={scrolled} />
+ {/* Show only when scrolled */}
       <Routes>
-        {/* Home Page */}
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home scrolled={scrolled} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
-        {/* Direct Medicine Search Page (optional) */}
-        <Route path="/search" element={<MedicineSearch />} />
       </Routes>
     </Router>
   );
 }
-
-export default App;
