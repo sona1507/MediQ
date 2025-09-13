@@ -1,6 +1,7 @@
+import mongoose from "mongoose"; // ✅ Add this at the top
 import Prescription from "../models/prescription.js";
 
-// Upload prescription
+// ✅ Upload prescription
 export const uploadPrescription = async (req, res) => {
   try {
     if (!req.file) {
@@ -8,13 +9,18 @@ export const uploadPrescription = async (req, res) => {
     }
 
     const { userId } = req.body;
+    if (!userId) {
+  return res.status(400).json({ message: "Missing userId" });
+}
+
 
     const prescription = new Prescription({
       userId,
-      fileName: req.file.filename,
-      originalName: req.file.originalname,
-      filePath: req.file.path,
-      status: "pending",
+      file: req.file.filename, // matches schema
+      fileName: req.file.filename, // ✅ added
+      originalName: req.file.originalname, // ✅ added
+      filePath: req.file.path, // ✅ added
+      status: "pending"
     });
 
     await prescription.save();
@@ -24,17 +30,17 @@ export const uploadPrescription = async (req, res) => {
   }
 };
 
-// Get all prescriptions
+// ✅ Get all prescriptions
 export const getPrescriptions = async (req, res) => {
   try {
-    const prescriptions = await Prescription.find();
+    const prescriptions = await Prescription.find().populate("userId", "name email");
     res.json(prescriptions);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
 
-// Approve prescription
+// ✅ Approve prescription
 export const approvePrescription = async (req, res) => {
   try {
     const { id } = req.params;
@@ -54,7 +60,7 @@ export const approvePrescription = async (req, res) => {
   }
 };
 
-// Reject prescription
+// ✅ Reject prescription
 export const rejectPrescription = async (req, res) => {
   try {
     const { id } = req.params;

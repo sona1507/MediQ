@@ -5,13 +5,6 @@ import cors from "cors";
 import fs from "fs";
 import path from "path";
 
-// Route imports
-import medicineRoutes from "./routes/medicineRoutes.js";
-import incidencesRoutes from "./routes/incidencesRoutes.js";
-import prescriptionRoutes from "./routes/prescriptionRoutes.js";
-import orderRoutes from "./routes/orderRoutes.js";
-import authRoutes from "./routes/authRoutes.js";
-
 // Load environment variables
 dotenv.config();
 
@@ -22,9 +15,13 @@ const app = express();
 // ===============================
 app.use(express.json());
 
-// ✅ CORS setup: allow both frontend ports
+// ✅ CORS setup: allow multiple frontend ports
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:3001", "http://localhost:3002"],
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://localhost:3002"
+  ],
   credentials: true,
 }));
 
@@ -33,7 +30,16 @@ const UPLOAD_DIR = path.join(process.cwd(), "uploads", "prescriptions");
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
 // ✅ Serve uploaded files statically
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+// ===============================
+// Route Imports
+// ===============================
+import medicineRoutes from "./routes/medicineRoutes.js";
+import incidencesRoutes from "./routes/incidencesRoutes.js";
+import prescriptionRoutes from "./routes/prescriptionRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 // ===============================
 // Routes
@@ -52,13 +58,21 @@ app.get("/", (req, res) => {
 // ===============================
 // MongoDB Connection
 // ===============================
-mongoose
-  .connect(process.env.MONGO_URI_ATLAS, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+const MONGO_URI = process.env.MONGO_URI_ATLAS;
+if (!MONGO_URI) {
+  console.error("❌ Missing MONGO_URI_ATLAS in .env");
+  process.exit(1);
+}
+
+mongoose.connect(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
   .then(() => console.log("✅ MongoDB connected successfully"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+  .catch((err) => {
+    console.error("❌ MongoDB connection error:", err);
+    process.exit(1);
+  });
 
 // ===============================
 // Server Listener

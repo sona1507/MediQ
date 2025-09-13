@@ -6,41 +6,36 @@ export default function ApprovedPrescriptions() {
   const [selectedPres, setSelectedPres] = useState(null);
   const [meds, setMeds] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
+  const [loadingMeds, setLoadingMeds] = useState(false);
 
-  // 1) Load all prescriptions and filter approved
+  // Load all approved prescriptions
   async function loadApproved() {
     try {
-      const { data } = await api.get("/api/prescriptions");
-      const approved = Array.isArray(data)
-        ? data.filter((p) => p.status === "approved")
-        : [];
-      setPrescriptions(approved);
+      const { data } = await api.get("/prescriptions/approved/all");
+      setPrescriptions(Array.isArray(data) ? data : []);
     } catch (e) {
-      console.error(e);
+      console.error("Failed to load approved prescriptions:", e);
     }
   }
 
-  // 2) When a prescription is chosen, fetch its medicine details
+  // Load medicine details for selected prescription
   async function loadPrescriptionMeds(pres) {
     setSelectedPres(pres);
     setMeds([]);
     setSelectedIds([]);
-
-    // Expect pres.medicines = ["id1","id2",...]
-    const ids = pres?.medicines || [];
-    if (!ids.length) return;
+    setLoadingMeds(true);
 
     try {
-      // Preferred: backend helper
-      const { data } = await api.post("/api/medicines/byIds", { ids });
-      setMeds(data);
+      const { data } = await api.get(`/prescriptions/${pres._id}`);
+      setMeds(data.approvedMedicines || []);
     } catch (e) {
-      console.error(e);
-      // If helper not available, you could fallback to multiple requests (only if you have GET /api/medicines/:id)
+      console.error("Failed to load medicines:", e);
+    } finally {
+      setLoadingMeds(false);
     }
   }
 
-  // 3) Add to cart (localStorage)
+  // Add items to cart in localStorage
   function addToCart(items) {
     const cart = JSON.parse(localStorage.getItem("cart") || "[]");
     const merged = [...cart, ...items];
@@ -65,51 +60,67 @@ export default function ApprovedPrescriptions() {
   }, []);
 
   return (
-    <section>
-      <h2 className="text-2xl font-semibold mb-4">Approved Prescriptions</h2>
+    <section className="container py-5">
+      <h2 className="mb-4 fw-bold">✅ Approved Prescriptions</h2>
 
-      {/* List approved prescriptions */}
-      <div className="grid gap-3 md:grid-cols-2">
+      {/* List of approved prescriptions */}
+      <div className="row g-3">
         {prescriptions.map((p) => (
-          <div key={p._id} className="border rounded p-3">
-            <div className="font-semibold">Prescription: {p._id}</div>
-            <div className="text-sm text-gray-600">Status: {p.status}</div>
-            {p.userId && <div className="text-sm">User: {p.userId}</div>}
-            <button
-              className="mt-2 px-3 py-1 rounded bg-black text-white"
-              onClick={() => loadPrescriptionMeds(p)}
-            >
-              View Medicines
-            </button>
+          <div key={p._id} className="col-md-6">
+            <div className="card p-3 shadow-sm">
+              <div><strong>ID:</strong> {p._id}</div>
+              <div><strong>Status:</strong> {p.status}</div>
+              {p.userId && <div><strong>User:</strong> {p.userId}</div>}
+              {p.filePath && (
+                <div className="mt-2">
+                  <a
+                    href={`http://localhost:5000/${p.filePath}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary text-decoration-underline"
+                  >
+                    View Uploaded File
+                  </a>
+                </div>
+              )}
+              <button
+                className="btn btn-dark mt-3"
+                onClick={() => loadPrescriptionMeds(p)}
+              >
+                View Medicines
+              </button>
+            </div>
           </div>
         ))}
       </div>
 
-      {/* Selected prescription medicines */}
+      {/* Medicines in selected prescription */}
       {selectedPres && (
-        <div className="mt-6">
-          <h3 className="text-xl font-semibold mb-2">
-            Medicines in Prescription {selectedPres._id}
-          </h3>
+        <div className="mt-5">
+          <h4 className="mb-3">
+            Medicines in Prescription <code>{selectedPres._id}</code>
+          </h4>
 
-          {meds.length === 0 ? (
-            <p className="text-gray-500">No medicines attached.</p>
+          {loadingMeds ? (
+            <p className="text-muted">Loading medicines...</p>
+          ) : meds.length === 0 ? (
+            <p className="text-muted">No medicines attached.</p>
           ) : (
             <>
-              <table className="w-full border">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="p-2 border">Select</th>
-                    <th className="p-2 border">Name</th>
-                    <th className="p-2 border">Category</th>
-                    <th className="p-2 border">Price</th>
-                    <th className="p-2 border">Prescription</th>
+              <table className="table table-bordered">
+                <thead className="table-light">
+                  <tr>
+                    <th>Select</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Prescription</th>
                   </tr>
                 </thead>
                 <tbody>
                   {meds.map((m) => (
                     <tr key={m._id}>
-                      <td className="p-2 border text-center">
+                      <td className="text-center">
                         <input
                           type="checkbox"
                           checked={selectedIds.includes(m._id)}
@@ -122,22 +133,20 @@ export default function ApprovedPrescriptions() {
                           }}
                         />
                       </td>
-                      <td className="p-2 border">{m.name}</td>
-                      <td className="p-2 border">{m.category}</td>
-                      <td className="p-2 border">₹{m.price}</td>
-                      <td className="p-2 border">
-                        {m.prescriptionRequired || (m.prescriptionRequired === false ? "Not Required" : "Not Required")}
-                      </td>
+                      <td>{m.name}</td>
+                      <td>{m.category}</td>
+                      <td>₹{m.price}</td>
+                      <td>{m.prescriptionRequired ? "Required" : "Not Required"}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
 
-              <div className="flex gap-2 mt-3">
-                <button onClick={buyAll} className="px-4 py-2 rounded bg-black text-white">
+              <div className="d-flex gap-2 mt-3">
+                <button onClick={buyAll} className="btn btn-dark">
                   Buy All
                 </button>
-                <button onClick={buySelected} className="px-4 py-2 rounded border">
+                <button onClick={buySelected} className="btn btn-outline-primary">
                   Buy Selected
                 </button>
               </div>

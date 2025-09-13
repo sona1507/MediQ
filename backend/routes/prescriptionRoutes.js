@@ -1,13 +1,20 @@
 import express from "express";
 import Prescription from "../models/prescription.js";
-import Medicine from "../models/Medicine.js"; // make sure this path is correct
+import Medicine from "../models/Medicine.js";
+import upload from "../prescription/upload.js";
+import { uploadPrescription } from "../controllers/prescriptionController.js";
 
 const router = express.Router();
 
 /**
+ * @route   POST /api/prescriptions/upload
+ * @desc    Upload prescription file
+ */
+router.post("/upload", upload.single("prescription"), uploadPrescription);
+
+/**
  * @route   POST /api/prescriptions/:id/items
- * @desc    Pharmacist: Attach medicines (with details) to a prescription
- * @body    { items: [{ medicineId, quantity, dosage?, instructions? }] }
+ * @desc    Attach medicines to a prescription
  */
 router.post("/:id/items", async (req, res) => {
   try {
@@ -16,14 +23,12 @@ router.post("/:id/items", async (req, res) => {
       return res.status(400).json({ message: "items array is required" });
     }
 
-    // validate medicines exist
     const medicineIds = items.map((i) => i.medicineId);
     const found = await Medicine.find({ _id: { $in: medicineIds } }, "_id");
     if (found.length !== medicineIds.length) {
       return res.status(400).json({ message: "One or more medicineId not found" });
     }
 
-    // prepare embedded items
     const toEmbed = items.map((i) => ({
       medicine: i.medicineId,
       quantity: i.quantity,
@@ -39,35 +44,7 @@ router.post("/:id/items", async (req, res) => {
 
     if (!updated) return res.status(404).json({ message: "Prescription not found" });
 
-    res.json({ message: "Medicines attached to prescription", prescription: updated });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-/**
- * @route   GET /api/prescriptions/:id/full
- * @desc    Get prescription with medicine details
- */
-router.get("/:id/full", async (req, res) => {
-  try {
-    const pres = await Prescription.findById(req.params.id).populate("items.medicine");
-    if (!pres) return res.status(404).json({ message: "Prescription not found" });
-    res.json(pres);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-/**
- * @route   GET /api/prescriptions/approved
- * @desc    Get all approved prescriptions with medicines (for buyers)
- */
-router.get("/approved/all", async (req, res) => {
-  try {
-    const prescriptions = await Prescription.find({ status: "approved" })
-      .populate("items.medicine");
-    res.json(prescriptions);
+    res.json({ message: "Medicines attached", prescription: updated });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -75,19 +52,25 @@ router.get("/approved/all", async (req, res) => {
 
 /**
  * @route   PATCH /api/prescriptions/:id/approve
- * @desc    Pharmacist approves prescription
+ * @desc    Approve prescription
  */
 router.patch("/:id/approve", async (req, res) => {
   try {
+    const { approvedMedicines } = req.body;
+
     const prescription = await Prescription.findByIdAndUpdate(
       req.params.id,
-      { status: "approved" },
+      {
+        status: "approved",
+        approvedMedicines
+      },
       { new: true }
-    ).populate("items.medicine");
+    ).populate("approvedMedicines items.medicine");
 
     if (!prescription) {
       return res.status(404).json({ message: "Prescription not found" });
     }
+
     res.json({ message: "Prescription approved", prescription });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -96,7 +79,7 @@ router.patch("/:id/approve", async (req, res) => {
 
 /**
  * @route   PATCH /api/prescriptions/:id/reject
- * @desc    Pharmacist rejects prescription
+ * @desc    Reject prescription
  */
 router.patch("/:id/reject", async (req, res) => {
   try {
@@ -109,6 +92,7 @@ router.patch("/:id/reject", async (req, res) => {
     if (!prescription) {
       return res.status(404).json({ message: "Prescription not found" });
     }
+
     res.json({ message: "Prescription rejected", prescription });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -116,8 +100,39 @@ router.patch("/:id/reject", async (req, res) => {
 });
 
 /**
+ * @route   GET /api/prescriptions/:id/full
+ * @desc    Get prescription with medicine details
+ */
+router.get("/:id/full", async (req, res) => {
+  try {
+    const pres = await Prescription.findById(req.params.id)
+      .populate("items.medicine approvedMedicines");
+
+    if (!pres) return res.status(404).json({ message: "Prescription not found" });
+    res.json(pres);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+/**
+ * @route   GET /api/prescriptions/approved/all
+ * @desc    Get all approved prescriptions with medicines
+ */
+router.get("/approved/all", async (req, res) => {
+  try {
+    const prescriptions = await Prescription.find({ status: "approved" })
+      .populate("items.medicine approvedMedicines");
+
+    res.json(prescriptions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+/**
  * @route   POST /api/prescriptions
- * @desc    Create new prescription (before pharmacist validation)
+ * @desc    Create new prescription manually
  */
 router.post("/", async (req, res) => {
   try {
@@ -125,7 +140,7 @@ router.post("/", async (req, res) => {
     await prescription.save();
     res.status(201).json(prescription);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -135,26 +150,31 @@ router.post("/", async (req, res) => {
  */
 router.get("/:id", async (req, res) => {
   try {
-    const prescription = await Prescription.findById(req.params.id);
+    const prescription = await Prescription.findById(req.params.id)
+      .populate("approvedMedicines items.medicine");
+
     if (!prescription) {
       return res.status(404).json({ message: "Prescription not found" });
     }
+
     res.json(prescription);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
 /**
  * @route   GET /api/prescriptions
- * @desc    Get all prescriptions (for admin or pharmacist)
+ * @desc    Get all prescriptions
  */
 router.get("/", async (req, res) => {
   try {
-    const prescriptions = await Prescription.find();
+    const prescriptions = await Prescription.find()
+      .populate("approvedMedicines items.medicine");
+
     res.json(prescriptions);
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
@@ -170,46 +190,8 @@ router.delete("/:id", async (req, res) => {
     }
     res.json({ message: "Prescription deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: "Server error", error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
-
-router.put("/:id/approve", async (req, res) => {
-  try {
-    const { approvedMedicines } = req.body; // array of medicine IDs
-
-    const prescription = await Prescription.findByIdAndUpdate(
-      req.params.id,
-      {
-        status: "Approved",
-        approvedMedicines
-      },
-      { new: true }
-    ).populate("approvedMedicines");
-
-    res.json({
-      message: "✅ Prescription approved",
-      prescription,
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-// routes/prescriptionRoutes.js
-router.get("/:id", async (req, res) => {
-  try {
-    const prescription = await Prescription.findById(req.params.id)
-      .populate("approvedMedicines");
-
-    if (!prescription) {
-      return res.status(404).json({ message: "Prescription not found" });
-    }
-
-    res.json(prescription);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
 
 export default router;

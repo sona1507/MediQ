@@ -4,7 +4,8 @@ function Navbar({ scrolled }) {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light shadow-sm fixed-top">
       <div className="container-fluid d-flex align-items-center justify-content-between">
-        {/* Left: Logo + Search bar when scrolled */}
+        
+        {/* Left: Logo + Search bar */}
         <div className="d-flex align-items-center flex-grow-1">
           <Link className="navbar-brand d-flex align-items-center me-3" to="/">
             <img
@@ -19,12 +20,12 @@ function Navbar({ scrolled }) {
             </span>
           </Link>
 
-          {/* Search bar inline when scrolled */}
+          {/* Search bar visible only when scrolled */}
           {scrolled && (
-            <form className="search-bar-container compact">
+            <form className="search-bar-container compact d-flex">
               <input
                 type="text"
-                className="form-control"
+                className="form-control me-2"
                 placeholder="Search for medicines"
               />
               <button type="submit" className="btn btn-primary">
@@ -34,7 +35,7 @@ function Navbar({ scrolled }) {
           )}
         </div>
 
-        {/* Right: Nav links + Cart + Auth */}
+        {/* Right: Navigation links */}
         <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul className="navbar-nav align-items-center">
             <li className="nav-item">

@@ -1,48 +1,68 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import api from "../api/axios";
 
-export default function UploadPrescription() {
+function UploadPrescription() {
   const [file, setFile] = useState(null);
-  const [userId, setUserId] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  async function handleUpload(e) {
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+    setMessage("");
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!file) return alert("Choose a file");
+    if (!file) return setMessage("Please select a file.");
 
-    const form = new FormData();
-    form.append("file", file);
-    if (userId) form.append("userId", userId);
+    const formData = new FormData();
+    formData.append("prescription", file);
+    formData.append("userId", "U001"); // ✅ string-based ID
+
+
 
     try {
-      const { data } = await api.post("/api/prescriptions/upload", form, {
+      setLoading(true);
+      const res = await api.post("/prescriptions/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      alert("Uploaded ✅");
-      console.log(data);
-    } catch (e) {
-      console.error(e);
-      alert("Upload failed");
+      setMessage(res.data.message);
+      setFile(null);
+    } catch (err) {
+      setMessage(err.response?.data?.message || "Upload failed.");
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   return (
-    <section>
-      <h2 className="text-2xl font-semibold mb-4">Upload Prescription</h2>
-      <form onSubmit={handleUpload} className="space-y-3">
-        <input
-          type="text"
-          placeholder="User ID (optional)"
-          className="border px-3 py-2 rounded w-full"
-          value={userId}
-          onChange={(e) => setUserId(e.target.value)}
-        />
-        <input
-          type="file"
-          accept=".jpg,.jpeg,.png,.pdf"
-          onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-        />
-        <button className="px-4 py-2 rounded bg-black text-white">Upload</button>
-      </form>
-    </section>
+    <div className="container py-5">
+      <div className="card p-4 shadow" style={{ maxWidth: "500px", margin: "0 auto" }}>
+        <h3 className="text-center mb-4">📤 Upload Prescription</h3>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="file"
+            accept=".jpg,.jpeg,.png,.pdf"
+            onChange={handleFileChange}
+            className="form-control mb-3"
+          />
+          <button className="btn btn-primary w-100" disabled={loading}>
+            {loading ? "Uploading..." : "Upload"}
+          </button>
+        </form>
+        {message && (
+  <p
+    className={`mt-3 text-center ${
+      message.toLowerCase().includes("uploaded") ? "text-success" : "text-danger"
+    }`}
+  >
+    {message}
+  </p>
+)}
+
+      </div>
+    </div>
   );
 }
+
+export default UploadPrescription;
