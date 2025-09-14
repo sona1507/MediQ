@@ -1,4 +1,4 @@
-import mongoose from "mongoose"; // ✅ Add this at the top
+import mongoose from "mongoose";
 import Prescription from "../models/prescription.js";
 
 // ✅ Upload prescription
@@ -10,16 +10,15 @@ export const uploadPrescription = async (req, res) => {
 
     const { userId } = req.body;
     if (!userId) {
-  return res.status(400).json({ message: "Missing userId" });
-}
-
+      return res.status(400).json({ message: "Missing userId" });
+    }
 
     const prescription = new Prescription({
       userId,
-      file: req.file.filename, // matches schema
-      fileName: req.file.filename, // ✅ added
-      originalName: req.file.originalname, // ✅ added
-      filePath: req.file.path, // ✅ added
+      file: req.file.filename,
+      fileName: req.file.filename,
+      originalName: req.file.originalname,
+      filePath: req.file.path,
       status: "pending"
     });
 
@@ -44,11 +43,12 @@ export const getPrescriptions = async (req, res) => {
 export const approvePrescription = async (req, res) => {
   try {
     const { id } = req.params;
+
     const prescription = await Prescription.findByIdAndUpdate(
       id,
       { status: "approved" },
       { new: true }
-    );
+    ).populate("userId", "name email");
 
     if (!prescription) {
       return res.status(404).json({ message: "Prescription not found" });
@@ -64,11 +64,12 @@ export const approvePrescription = async (req, res) => {
 export const rejectPrescription = async (req, res) => {
   try {
     const { id } = req.params;
+
     const prescription = await Prescription.findByIdAndUpdate(
       id,
       { status: "rejected" },
       { new: true }
-    );
+    ).populate("userId", "name email");
 
     if (!prescription) {
       return res.status(404).json({ message: "Prescription not found" });

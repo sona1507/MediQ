@@ -14,10 +14,38 @@ function Login() {
     e.preventDefault();
     try {
       setLoading(true);
-      const res = await api.post("/auth/login", formData);
-      alert(res.data.message);
-      navigate("/dashboard");
+
+      const res = await api.post("/auth/login", {
+        email: formData.email.trim().toLowerCase(),
+        password: formData.password.trim()
+      });
+
+      const user = res.data?.user;
+
+      if (!user || !user.role) {
+        console.error("❌ Missing role in login response:", res.data);
+        alert("Login response missing role. Please contact support.");
+        return;
+      }
+
+      localStorage.setItem("user", JSON.stringify(user));
+      window.dispatchEvent(new Event("storage")); // ✅ Trigger App.jsx to reload user
+
+      console.log("✅ Logged in user:", user);
+      alert(res.data.message || "Login successful");
+
+      switch (user.role) {
+        case "pharmacist":
+          navigate("/pharmacist");
+          break;
+        case "admin":
+          navigate("/admin");
+          break;
+        default:
+          navigate("/");
+      }
     } catch (err) {
+      console.error("❌ Login error:", err);
       alert(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
@@ -25,7 +53,10 @@ function Login() {
   };
 
   return (
-    <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "80vh" }}>
+    <div
+      className="container d-flex justify-content-center align-items-center"
+      style={{ minHeight: "80vh" }}
+    >
       <div className="card shadow p-4 w-100" style={{ maxWidth: "400px" }}>
         <h2 className="text-center mb-4">Login</h2>
         <form onSubmit={handleSubmit} autoComplete="on">

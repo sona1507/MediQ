@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import MedicineSearch from "../components/MedicineSearch";
-import { Link } from "react-router-dom"; // ✅ Add at the top
+import { Link } from "react-router-dom";
 import "bootstrap/dist/js/bootstrap.bundle";
 import CategorySection from "../components/CategorySection";
 
 function Home() {
   const [scrolled, setScrolled] = useState(false);
+
+  // ✅ Simulated user object (replace with real auth logic)
+  const user = JSON.parse(localStorage.getItem("user")); // or useContext(AuthContext)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -135,6 +138,11 @@ function Home() {
           <Link to="/orders" className="btn btn-outline-dark m-2">
             View Orders
           </Link>
+          {user?.role === "pharmacist" && (
+            <Link to="/pharmacist" className="btn btn-outline-info m-2">
+              Pharmacist Dashboard
+            </Link>
+          )}
         </div>
       </section>
     </div>
