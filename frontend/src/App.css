@@ -2,7 +2,7 @@
    GLOBAL
 ================================= */
 :root {
-  --main-navbar-height: 56px; /* Reduced from 70px */
+  --main-navbar-height: 70px; /* Unified declaration */
 }
 
 body {
@@ -22,7 +22,9 @@ body {
   left: 0;
   width: 100%;
   height: var(--main-navbar-height);
-  z-index: 1200;
+ z-index: 1300;
+position: relative;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,20 +56,31 @@ body {
 }
 
 /* ===============================
-   SEARCH BAR STYLES
+   SEARCH BAR STYLES - OVERLAY VERSION
 ================================= */
-.search-bar-container {
-  background: #f9fbff;
+.overlay-search-bar {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  width: 90%;
+  max-width: 700px;
   padding: 24px;
+  background: #f9fbff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  max-width: 600px;
-  margin: 40px auto;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
   text-align: center;
   transition: all 0.4s ease-in-out;
 }
 
-.search-bar-container h2 {
+/* Optional fade-in animation */
+.overlay-search-bar.fade-in {
+  animation: fadeIn 0.4s ease forwards;
+  opacity: 0;
+}
+
+.overlay-search-bar h2 {
   font-size: 22px;
   margin-bottom: 12px;
   color: #007bff;
@@ -77,7 +90,7 @@ body {
   gap: 8px;
 }
 
-.search-bar-container input {
+.overlay-search-bar input {
   width: 100%;
   padding: 12px 14px;
   border: 1px solid #007bff;
@@ -86,10 +99,11 @@ body {
   transition: border-color 0.3s;
 }
 
-.search-bar-container input:focus {
+.overlay-search-bar input:focus {
   border-color: #0056b3;
 }
 
+/* Compact version for embedded use */
 .search-bar-container.compact {
   position: relative;
   transform: none;
@@ -133,6 +147,21 @@ body {
 
 @keyframes fadeIn {
   to { opacity: 1; }
+}
+.overlay-search-bar .welcome-text {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.overlay-search-bar .welcome-text h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #333;
+}
+
+.overlay-search-bar .welcome-text p {
+  font-size: 16px;
+  color: #666;
 }
 
 /* ======= Category Navbar (fixed under main navbar) ======= */

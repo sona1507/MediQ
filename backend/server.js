@@ -4,24 +4,31 @@ import dotenv from "dotenv";
 import cors from "cors";
 import fs from "fs";
 import path from "path";
+// import morgan from "morgan"; // Optional: request logging
 
-// Load environment variables
 dotenv.config();
-
 const app = express();
 
 // ===============================
 // Middleware
 // ===============================
 app.use(express.json());
+// app.use(morgan("dev")); // Optional: enable for request logs
 
-// ✅ CORS setup: allow multiple frontend ports
+// ✅ CORS setup: allow multiple frontend ports or fallback
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3002"
+];
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://localhost:3002"
-  ],
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 }));
 
@@ -56,11 +63,19 @@ app.get("/", (req, res) => {
 });
 
 // ===============================
+// Global Error Handler
+// ===============================
+app.use((err, req, res, next) => {
+  console.error("🔥 Server error:", err.message);
+  res.status(500).json({ message: "Internal Server Error", error: err.message });
+});
+
+// ===============================
 // MongoDB Connection
 // ===============================
-const MONGO_URI = process.env.MONGO_URI_ATLAS;
+const MONGO_URI = process.env.MONGO_URI_ATLAS || process.env.MONGO_URI_LOCAL;
 if (!MONGO_URI) {
-  console.error("❌ Missing MONGO_URI_ATLAS in .env");
+  console.error("❌ Missing MongoDB URI in .env");
   process.exit(1);
 }
 

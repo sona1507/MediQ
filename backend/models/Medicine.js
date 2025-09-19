@@ -18,20 +18,25 @@ const medicineSchema = new mongoose.Schema(
     },
     description: {
       type: String,
+      trim: true,
     },
     price: {
       type: Number,
       required: true,
+      min: 0,
     },
     stock: {
       type: Number,
       default: 0,
+      min: 0,
     },
     dosage: {
       type: String, // e.g. "1 tablet twice daily"
+      trim: true,
     },
     prescriptionRequired: {
-      type: String, // e.g. "Required" or "Not Required"
+      type: String, // "Required" or "Not Required"
+      enum: ["Required", "Not Required"],
       default: "Not Required",
     },
   },

@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import MedicineSearch from "../components/MedicineSearch";
 import { Link } from "react-router-dom";
-import "bootstrap/dist/js/bootstrap.bundle";
 import CategorySection from "../components/CategorySection";
+import api from "../api/axios";
+import "bootstrap/dist/js/bootstrap.bundle";
 
 function Home() {
   const [scrolled, setScrolled] = useState(false);
-
-  // ✅ Simulated user object (replace with real auth logic)
-  const user = JSON.parse(localStorage.getItem("user")); // or useContext(AuthContext)
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,9 +17,9 @@ function Home() {
     };
     window.addEventListener("scroll", handleScroll);
 
-    const bootstrap = require("bootstrap/dist/js/bootstrap.bundle.min.js");
     const carouselElement = document.querySelector("#heroCarousel");
     if (carouselElement) {
+      const bootstrap = require("bootstrap/dist/js/bootstrap.bundle.min.js");
       new bootstrap.Carousel(carouselElement, {
         interval: 3000,
         ride: "carousel",
@@ -31,65 +32,104 @@ function Home() {
     };
   }, []);
 
+  // ✅ Search logic lifted here
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (query.trim().length < 2) return setSuggestions([]);
+      try {
+        const res = await api.get("/medicines/search", {
+          params: { q: query },
+        });
+        setSuggestions(res.data);
+      } catch (err) {
+        console.error("Search error:", err.message);
+      }
+    };
+
+    const debounce = setTimeout(fetchSuggestions, 300);
+    return () => clearTimeout(debounce);
+  }, [query]);
+
   return (
     <div>
-      {/* ✅ HERO CAROUSEL */}
-      <div
-        id="heroCarousel"
-        className="carousel slide carousel-fade"
-        style={{ margin: "20px", borderRadius: "12px", overflow: "hidden" }}
-      >
-        {/* indicators */}
-        <div className="carousel-indicators">
-          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" className="active"></button>
-          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
-          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+      {/* ✅ HERO SECTION */}
+      <div style={{ position: "relative" }}>
+        <div
+          id="heroCarousel"
+          className="carousel slide carousel-fade"
+          style={{ margin: "20px", borderRadius: "12px", overflow: "hidden" }}
+        >
+          <div className="carousel-indicators">
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" className="active"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+            <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+          </div>
+
+          <div className="carousel-inner">
+            <div className="carousel-item active hero-slide" style={carouselStyle("/images/bg1.jpg")}>
+              <CarouselContent />
+            </div>
+            <div className="carousel-item hero-slide" style={carouselStyle("/images/bg2.jpg")}>
+              <CarouselContent />
+            </div>
+            <div className="carousel-item hero-slide" style={carouselStyle("/images/bg3.jpg")}>
+              <CarouselContent />
+            </div>
+          </div>
+
+          <button className="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
+            <span className="carousel-control-prev-icon"></span>
+          </button>
+          <button className="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
+            <span className="carousel-control-next-icon"></span>
+          </button>
         </div>
 
-        {/* slides */}
-        <div className="carousel-inner">
-          <div className="carousel-item active hero-slide d-flex flex-column justify-content-center align-items-center text-center"
-            style={{
-              backgroundImage: "url('/images/bg1.jpg')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              height: "70vh",
-            }}>
-            <CarouselContent scrolled={false} />
+        {/* ✅ OVERLAY SEARCH BAR */}
+        <div className="overlay-search-bar">
+          <div className="welcome-text">
+            <h1 className="fw-bold mb-3">
+              Welcome to <span className="text-info">MediQ</span>
+            </h1>
+            <p className="text-muted mb-4">
+              Your trusted pharmacy partner – search, order & manage medicines online.
+            </p>
           </div>
-
-          <div className="carousel-item hero-slide d-flex flex-column justify-content-center align-items-center text-center"
-            style={{
-              backgroundImage: "url('/images/bg2.jpg')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              height: "70vh",
-            }}>
-            <CarouselContent scrolled={scrolled} />
-          </div>
-
-          <div className="carousel-item hero-slide d-flex flex-column justify-content-center align-items-center text-center"
-            style={{
-              backgroundImage: "url('/images/bg3.jpg')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundRepeat: "no-repeat",
-              height: "70vh",
-            }}>
-            <CarouselContent scrolled={scrolled} />
-          </div>
+          <MedicineSearch query={query} setQuery={setQuery} scrolled={scrolled} />
         </div>
-
-        {/* controls */}
-        <button className="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-          <span className="carousel-control-prev-icon"></span>
-        </button>
-        <button className="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-          <span className="carousel-control-next-icon"></span>
-        </button>
       </div>
+
+      {/* ✅ Search Results BELOW Hero */}
+      {suggestions.length > 0 && (
+        <div
+          className="container"
+          style={{
+            marginTop: "40px",
+            padding: "20px",
+            background: "#fff",
+            borderRadius: "12px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+          }}
+        >
+          <h5 className="mb-3 text-primary">
+            Showing results for: <span className="text-dark">{query}</span>
+          </h5>
+
+          <div className="row">
+            {suggestions.map((med) => (
+              <div key={med._id} className="col-md-4 mb-4">
+                <div className="p-3 border rounded shadow-sm h-100 bg-light">
+                  <h6 className="text-primary">{med.name}</h6>
+                  <p className="mb-1"><strong>Category:</strong> {med.category}</p>
+                  <p className="mb-1"><strong>Symptoms:</strong> {med.symptoms.join(", ")}</p>
+                  <p className="mb-1 text-muted" style={{ fontSize: "14px" }}>{med.description}</p>
+                  <p className="mt-2"><strong>Price:</strong> ₹{med.price}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* ✅ CATEGORY SECTION */}
       <CategorySection />
@@ -149,27 +189,37 @@ function Home() {
   );
 }
 
-/* --- Reusable content inside each slide --- */
-function CarouselContent({ scrolled }) {
+function carouselStyle(imageUrl) {
+  return {
+    backgroundImage: `url('${imageUrl}')`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    height: "70vh",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
+  };
+}
+
+function CarouselContent() {
   return (
-    <div style={{
-      position: "relative",
-      maxWidth: "700px",
-      width: "100%",
-      padding: "20px",
-      color: "#333",
-    }}>
+    <div
+      style={{
+        position: "relative",
+        maxWidth: "700px",
+        width: "100%",
+        padding: "20px",
+        color: "#333",
+      }}
+    >
       <h1 className="fw-bold mb-3">
         Welcome to <span className="text-info">MediQ</span>
       </h1>
       <p className="text-muted mb-4">
         Your trusted pharmacy partner – search, order & manage medicines online.
       </p>
-      {!scrolled && (
-        <div className="search-bar-container">
-          <MedicineSearch />
-        </div>
-      )}
     </div>
   );
 }
