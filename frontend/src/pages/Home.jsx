@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import MedicineSearch from "../components/MedicineSearch";
 import { Link } from "react-router-dom";
 import CategorySection from "../components/CategorySection";
+import CategoryNavbar from "../components/CategoryNavbar"; // ✅ Add this component
+import PersonalCare from "../components/personalcare/PersonalCare";
 import api from "../api/axios";
 import "bootstrap/dist/js/bootstrap.bundle";
 
@@ -9,6 +11,7 @@ function Home() {
   const [scrolled, setScrolled] = useState(false);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("Medicines"); // ✅ New state
   const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
@@ -32,7 +35,6 @@ function Home() {
     };
   }, []);
 
-  // ✅ Search logic lifted here
   useEffect(() => {
     const fetchSuggestions = async () => {
       if (query.trim().length < 2) return setSuggestions([]);
@@ -49,6 +51,17 @@ function Home() {
     const debounce = setTimeout(fetchSuggestions, 300);
     return () => clearTimeout(debounce);
   }, [query]);
+
+  const renderCategorySection = () => {
+    switch (selectedCategory) {
+      case "Personal Care":
+        return <PersonalCare />;
+      case "Medicines":
+        return <CategorySection />;
+      default:
+        return <CategorySection />;
+    }
+  };
 
   return (
     <div>
@@ -131,8 +144,11 @@ function Home() {
         </div>
       )}
 
-      {/* ✅ CATEGORY SECTION */}
-      <CategorySection />
+      {/* ✅ CATEGORY NAVBAR */}
+      <CategoryNavbar onSelect={setSelectedCategory} />
+
+      {/* ✅ DYNAMIC CATEGORY SECTION */}
+      {renderCategorySection()}
 
       {/* ======= Features ======= */}
       <section className="container my-5">
