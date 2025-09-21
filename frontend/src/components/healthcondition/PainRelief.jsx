@@ -36,14 +36,13 @@ const PainRelief = () => {
               <img
                 src={product.image}
                 alt={product.name}
-                className="card-img-top"
-                style={{ height: '200px', objectFit: 'cover' }}
+                className="card-img-top product-image"
               />
-              <div className="card-body">
+              <div className="card-body d-flex flex-column">
                 <h5 className="card-title text-primary">{product.name}</h5>
                 <p className="card-text text-muted">{product.description}</p>
-                <p className="fw-bold">₹{product.price}</p>
-                <button className="btn btn-success w-100">
+                <p className="fw-bold mt-auto">₹{product.price}</p>
+                <button className="btn btn-success w-100 mt-2">
                   <i className="bi bi-cart-plus me-2"></i>Add to Cart
                 </button>
               </div>

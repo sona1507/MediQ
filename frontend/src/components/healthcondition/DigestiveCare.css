@@ -4,29 +4,52 @@
   border-radius: 12px;
 }
 
+/* Card Styling */
 .card {
   border: none;
   transition: transform 0.3s ease;
   border-radius: 12px;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover {
   transform: scale(1.03);
 }
 
+/* Product Image */
+.product-image {
+  height: 140px;
+  object-fit: contain;
+  padding: 8px;
+  background-color: #fff;
+}
+
+/* Card Content */
+.card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 .card-title {
   font-size: 18px;
   font-weight: 600;
   color: #007bff;
+  margin-bottom: 6px;
 }
 
 .card-text {
   font-size: 14px;
   color: #555;
+  margin-bottom: 8px;
 }
 
+/* Button */
 .btn-success {
   font-size: 14px;
   padding: 8px 12px;
+  margin-top: auto;
 }

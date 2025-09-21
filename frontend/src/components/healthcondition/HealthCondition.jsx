@@ -19,19 +19,19 @@ const filterOptions = [
 ];
 
 const products = [
-  { name: 'Calcium Tablets', subcategory: 'Bone and Joint Care', description: 'Supports bone strength and density.', price: 220, image: '/images/health/bone-care.jpg' },
-  { name: 'Probiotic Capsules', subcategory: 'Digestive & Stomach Care', description: 'Improves gut health and digestion.', price: 180, image: '/images/health/digestive.jpg' },
-  { name: 'Antacid Tablets', subcategory: 'Digestive & Stomach Care', description: 'Relieves acidity and indigestion.', price: 100, image: '/images/health/stomach.jpg' },
-  { name: 'Eye Drops', subcategory: 'Eye Care', description: 'Relieves dryness and irritation.', price: 60, image: '/images/health/eye-care.jpg' },
-  { name: 'Pain Relief Spray', subcategory: 'Pain Relief', description: 'Quick relief from muscle pain.', price: 130, image: '/images/health/pain-relief.jpg' },
-  { name: 'Nicotine Patches', subcategory: 'Smoking Cessation', description: 'Helps reduce cravings.', price: 300, image: '/images/health/smoking.jpg' },
-  { name: 'Liver Detox Syrup', subcategory: 'Liver Care', description: 'Supports liver function.', price: 150, image: '/images/health/liver.jpg' },
-  { name: 'Cough Syrup', subcategory: 'Cold and Cough', description: 'Soothes throat and clears congestion.', price: 120, image: '/images/health/cough.jpg' },
-  { name: 'Heart Health Capsules', subcategory: 'Heart Care', description: 'Supports cardiovascular wellness.', price: 250, image: '/images/health/heart.jpg' },
-  { name: 'Kidney Support Tablets', subcategory: 'Kidney Care', description: 'Promotes kidney function.', price: 200, image: '/images/health/kidney.jpg' },
-  { name: 'Inhaler', subcategory: 'Respiratory Care', description: 'Relieves asthma and breathing issues.', price: 180, image: '/images/health/respiratory.jpg' },
-  { name: 'Mood Support Capsules', subcategory: 'Mental Wellness', description: 'Helps reduce stress and anxiety.', price: 270, image: '/images/health/mental.jpg' },
-  { name: 'Anti-Acne Gel', subcategory: 'Derma Care', description: 'Treats pimples and blemishes.', price: 160, image: '/images/health/derma.jpg' },
+  { name: 'Calcium Tablets', subcategory: 'Bone and Joint Care', description: 'Supports bone strength and density.', price: 220, image: '/images/bone-care.jpg' },
+  { name: 'Probiotic Capsules', subcategory: 'Digestive & Stomach Care', description: 'Improves gut health and digestion.', price: 180, image: '/images/digestive.jpg' },
+  { name: 'Antacid Tablets', subcategory: 'Digestive & Stomach Care', description: 'Relieves acidity and indigestion.', price: 100, image: '/images/stomach.jpg' },
+  { name: 'Eye Drops', subcategory: 'Eye Care', description: 'Relieves dryness and irritation.', price: 60, image: '/images/eye-care.jpg' },
+  { name: 'Pain Relief Spray', subcategory: 'Pain Relief', description: 'Quick relief from muscle pain.', price: 130, image: '/images/pain-relief.jpg' },
+  { name: 'Nicotine Patches', subcategory: 'Smoking Cessation', description: 'Helps reduce cravings.', price: 300, image: '/images/smoking.jpg' },
+  { name: 'Liver Detox Syrup', subcategory: 'Liver Care', description: 'Supports liver function.', price: 150, image: '/images/liver.jpg' },
+  { name: 'Cough Syrup', subcategory: 'Cold and Cough', description: 'Soothes throat and clears congestion.', price: 120, image: '/images/cough.jpg' },
+  { name: 'Heart Health Capsules', subcategory: 'Heart Care', description: 'Supports cardiovascular wellness.', price: 250, image: '/images/heart.jpg' },
+  { name: 'Kidney Support Tablets', subcategory: 'Kidney Care', description: 'Promotes kidney function.', price: 200, image: '/images/kidney.jpg' },
+  { name: 'Inhaler', subcategory: 'Respiratory Care', description: 'Relieves asthma and breathing issues.', price: 180, image: '/images/respiratory.jpg' },
+  { name: 'Mood Support Capsules', subcategory: 'Mental Wellness', description: 'Helps reduce stress and anxiety.', price: 270, image: '/images/mental.jpg' },
+  { name: 'Anti-Acne Gel', subcategory: 'Derma Care', description: 'Treats pimples and blemishes.', price: 160, image: '/images/derma.jpg' },
 ];
 
 const HealthCondition = () => {
@@ -100,7 +100,7 @@ else {
               onClick={() => handleCategoryClick(option)}
             >
               <img
-                src={`/icons/${option.toLowerCase().replace(/ /g, '-')}.png`}
+                src={`/images/${option.toLowerCase().replace(/ /g, '-')}.png`}
                 alt={option}
                 className="category-icon mb-2"
               />
