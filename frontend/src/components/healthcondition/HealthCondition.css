@@ -41,15 +41,22 @@
   transition: transform 0.3s ease;
 }
 
+.product-image {
+  height: 140px;
+  object-fit: contain;
+  padding: 8px;
+  background-color: #fff;
+}
+
 .card-title {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   color: #007bff;
 }
 
-.card-text {
-  font-size: 14px;
-  color: #555;
+.text-purple {
+  color: #6f42c1;
+  font-size: 13px;
 }
 
 .btn-success {

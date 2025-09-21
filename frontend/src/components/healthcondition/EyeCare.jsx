@@ -5,7 +5,7 @@ const products = [
   { name: "Itone Eye Drops 10ml", description: "50% OFF", price: 43.42, image: "/images/itone.jpg", discount: "50% OFF" },
   { name: "Everfresh Tears Eye Drops 10ml", description: "50% OFF", price: 65.49, image: "/images/everfresh.jpg", discount: "50% OFF" },
   { name: "Refresh Tears Eye Drops 10ml", description: "15% OFF", price: 126.36, image: "/images/refresh.jpg", discount: "15% OFF" },
-  { name: "I Site Af Capsule 10", description: "17% OFF", price: 231, image: "/images/isite.jpg", discount: "17% OFF" },
+  { name: "I Site Af Capsule 10", description: "17% OFF", price: 231, image: "/images/i-site.jpg", discount: "17% OFF" },
   { name: "Eyemist Gel 10gm", description: "17% OFF", price: 373.5, image: "/images/eyemist.jpg", discount: "17% OFF" },
   { name: "Gloeye Tablet 10", description: "18% OFF", price: 126.36, image: "/images/gloeye.jpg", discount: "18% OFF" },
   { name: "Genteal Eye Drops 10ml", description: "14% OFF", price: 226.46, image: "/images/genteal.jpg", discount: "14% OFF" },

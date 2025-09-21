@@ -11,12 +11,12 @@ const filterOptions = [
 ];
 
 const products = [
-  { name: 'Herbal Toothpaste', subcategory: 'Tooth Paste', description: 'Natural protection for teeth and gums.', price: 90, image: '/images/oralcare/toothpaste.jpg' },
-  { name: 'Mouth Ulcer Gel', subcategory: 'Mouth Ulcer Gel', description: 'Soothes and heals mouth ulcers.', price: 120, image: '/images/oralcare/ulcer-gel.jpg' },
-  { name: 'Mint Mouthwash', subcategory: 'Mouthwash', description: 'Fresh breath and antibacterial protection.', price: 150, image: '/images/oralcare/mouthwash.jpg' },
-  { name: 'Gum Pain Relief Cream', subcategory: 'Toothache and Gum Pain', description: 'Relieves gum inflammation and pain.', price: 130, image: '/images/oralcare/gum-pain.jpg' },
-  { name: 'Soft Bristle Toothbrush', subcategory: 'Tooth Brush', description: 'Gentle cleaning for sensitive teeth.', price: 60, image: '/images/oralcare/toothbrush.jpg' },
-  { name: 'Antiseptic Gargle Solution', subcategory: 'Gargle Solution', description: 'Kills germs and soothes throat.', price: 110, image: '/images/oralcare/gargle.jpg' },
+  { name: 'Herbal Toothpaste', subcategory: 'Tooth Paste', description: 'Natural protection for teeth and gums.', price: 90, image: '/images/allmed.jpg' },
+  { name: 'Mouth Ulcer Gel', subcategory: 'Mouth Ulcer Gel', description: 'Soothes and heals mouth ulcers.', price: 120, image: '/images/allmed.jpg' },
+  { name: 'Mint Mouthwash', subcategory: 'Mouthwash', description: 'Fresh breath and antibacterial protection.', price: 150, image: '/images/allmed.jpg' },
+  { name: 'Gum Pain Relief Cream', subcategory: 'Toothache and Gum Pain', description: 'Relieves gum inflammation and pain.', price: 130, image: '/images/allmed.jpg' },
+  { name: 'Soft Bristle Toothbrush', subcategory: 'Tooth Brush', description: 'Gentle cleaning for sensitive teeth.', price: 60, image: '/images/allmed.jpg' },
+  { name: 'Antiseptic Gargle Solution', subcategory: 'Gargle Solution', description: 'Kills germs and soothes throat.', price: 110, image: '/images/allmed.jpg' },
 ];
 
 const OralCare = () => {

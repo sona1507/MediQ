@@ -28,17 +28,17 @@ const subcategoryMap = {
 };
 
 const products = [
-  { name: 'Aloe Vera Gel', subcategory: 'Moisturising Gel', description: 'Hydrates and soothes skin.', price: 180, image: '/images/skincare/aloe-vera.jpg' },
-  { name: 'SPF 50 Sunscreen', subcategory: 'Sunscreen', description: 'Protects against UV rays.', price: 250, image: '/images/skincare/sunscreen.jpg' },
-  { name: 'Neem Face Wash', subcategory: 'Face Wash', description: 'Cleanses and prevents acne.', price: 160, image: '/images/skincare/face-wash.jpg' },
-  { name: 'Anti-Acne Gel', subcategory: 'Acne Care', description: 'Targets breakouts and inflammation.', price: 220, image: '/images/skincare/acne-gel.jpg' },
-  { name: 'Moisturising Cream', subcategory: 'Moisturising Cream', description: 'Deep hydration for dry skin.', price: 200, image: '/images/skincare/moist-cream.jpg' },
-  { name: 'Moisturising Lotion', subcategory: 'Moisturising Lotion', description: 'Lightweight daily moisturizer.', price: 190, image: '/images/skincare/moist-lotion.jpg' },
-  { name: 'Herbal Body Soap', subcategory: 'Skin and Body Soap', description: 'Gentle cleansing with herbs.', price: 90, image: '/images/skincare/body-soap.jpg' },
-  { name: 'Body Wash', subcategory: 'Body Wash', description: 'Refreshing and gentle.', price: 160, image: '/images/skincare/body-wash.jpg' },
-  { name: 'Mosquito Repellent Spray', subcategory: 'Mosquito Repellent', description: 'Long-lasting protection.', price: 140, image: '/images/skincare/mosquito.jpg' },
-  { name: 'Body Lotion', subcategory: 'Body Lotions', description: 'Softens and nourishes skin.', price: 210, image: '/images/skincare/body-lotion.jpg' },
-  { name: 'Skin Cream', subcategory: 'Skin Cream', description: 'Rich cream for dry patches.', price: 230, image: '/images/skincare/skin-cream.jpg' },
+  { name: 'Aloe Vera Gel', subcategory: 'Moisturising Gel', description: 'Hydrates and soothes skin.', price: 180, image: '/images/allmed.jpg' },
+  { name: 'SPF 50 Sunscreen', subcategory: 'Sunscreen', description: 'Protects against UV rays.', price: 250, image: '/images/allmed.jpg' },
+  { name: 'Neem Face Wash', subcategory: 'Face Wash', description: 'Cleanses and prevents acne.', price: 160, image: '/images/allmed.jpg' },
+  { name: 'Anti-Acne Gel', subcategory: 'Acne Care', description: 'Targets breakouts and inflammation.', price: 220, image: '/images/allmed.jpg' },
+  { name: 'Moisturising Cream', subcategory: 'Moisturising Cream', description: 'Deep hydration for dry skin.', price: 200, image: '/images/allmed.jpg' },
+  { name: 'Moisturising Lotion', subcategory: 'Moisturising Lotion', description: 'Lightweight daily moisturizer.', price: 190, image: '/images/allmed.jpg' },
+  { name: 'Herbal Body Soap', subcategory: 'Skin and Body Soap', description: 'Gentle cleansing with herbs.', price: 90, image: '/images/allmed.jpg' },
+  { name: 'Body Wash', subcategory: 'Body Wash', description: 'Refreshing and gentle.', price: 160, image: '/images/allmed.jpg' },
+  { name: 'Mosquito Repellent Spray', subcategory: 'Mosquito Repellent', description: 'Long-lasting protection.', price: 140, image: '/images/allmed.jpg' },
+  { name: 'Body Lotion', subcategory: 'Body Lotions', description: 'Softens and nourishes skin.', price: 210, image: '/images/allmed.jpg' },
+  { name: 'Skin Cream', subcategory: 'Skin Cream', description: 'Rich cream for dry patches.', price: 230, image: '/images/allmed.jpg' },
 ];
 
 const SkinCare = () => {

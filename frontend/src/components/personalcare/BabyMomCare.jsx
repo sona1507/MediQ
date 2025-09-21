@@ -15,16 +15,16 @@ const filterOptions = [
 ];
 
 const products = [
-  { name: 'Baby Thermometer', subcategory: 'Baby Healthcare', description: 'Accurate temperature reading for infants.', price: 250, image: '/images/babymomcare/thermometer.jpg' },
-  { name: 'Diaper Pack XL', subcategory: 'Baby Diapers and Wipes', description: 'Soft and absorbent diapers.', price: 480, image: '/images/babymomcare/diapers.jpg' },
-  { name: 'Moisturising Baby Lotion', subcategory: 'Baby Lotion and Moisturising Cream', description: 'Gentle hydration for baby skin.', price: 180, image: '/images/babymomcare/lotion.jpg' },
-  { name: 'Baby Shampoo & Soap Combo', subcategory: 'Baby Bath Essentials', description: 'Tear-free formula for daily bath.', price: 220, image: '/images/babymomcare/bath.jpg' },
-  { name: 'Baby Sunscreen Cream', subcategory: 'Baby Skin Care', description: 'Protects delicate skin from UV rays.', price: 200, image: '/images/babymomcare/skincare.jpg' },
-  { name: 'Infant Cereal Mix', subcategory: 'Baby and Infant Food', description: 'Iron-rich food for 6+ months.', price: 150, image: '/images/babymomcare/infant-food.jpg' },
-  { name: 'Women’s Multivitamin Tablets', subcategory: 'Women Multivitamins', description: 'Supports immunity and energy.', price: 300, image: '/images/babymomcare/multivitamins.jpg' },
-  { name: 'Ovulation Test Kit', subcategory: 'Ovulation Test Kit and Women Intimate Care', description: 'Easy-to-use fertility tracker.', price: 350, image: '/images/babymomcare/ovulation.jpg' },
-  { name: 'Maternity Belt', subcategory: 'Maternity Care', description: 'Back support during pregnancy.', price: 400, image: '/images/babymomcare/maternity.jpg' },
-  { name: 'Protein Nutritional Shake', subcategory: 'Nutritional Drinks', description: 'Boosts strength and recovery.', price: 280, image: '/images/babymomcare/nutrition.jpg' },
+  { name: 'Baby Thermometer', subcategory: 'Baby Healthcare', description: 'Accurate temperature reading for infants.', price: 250, image: '/images/allmed.jpg' },
+  { name: 'Diaper Pack XL', subcategory: 'Baby Diapers and Wipes', description: 'Soft and absorbent diapers.', price: 480, image: '/images/allmed.jpg' },
+  { name: 'Moisturising Baby Lotion', subcategory: 'Baby Lotion and Moisturising Cream', description: 'Gentle hydration for baby skin.', price: 180, image: '/images/allmed.jpg' },
+  { name: 'Baby Shampoo & Soap Combo', subcategory: 'Baby Bath Essentials', description: 'Tear-free formula for daily bath.', price: 220, image: '/images/allmed.jpg' },
+  { name: 'Baby Sunscreen Cream', subcategory: 'Baby Skin Care', description: 'Protects delicate skin from UV rays.', price: 200, image: '/images/allmed.jpg' },
+  { name: 'Infant Cereal Mix', subcategory: 'Baby and Infant Food', description: 'Iron-rich food for 6+ months.', price: 150, image: '/images/allmed.jpg' },
+  { name: 'Women’s Multivitamin Tablets', subcategory: 'Women Multivitamins', description: 'Supports immunity and energy.', price: 300, image: '/images/allmed.jpg' },
+  { name: 'Ovulation Test Kit', subcategory: 'Ovulation Test Kit and Women Intimate Care', description: 'Easy-to-use fertility tracker.', price: 350, image: '/images/allmed.jpg' },
+  { name: 'Maternity Belt', subcategory: 'Maternity Care', description: 'Back support during pregnancy.', price: 400, image: '/images/allmed.jpg' },
+  { name: 'Protein Nutritional Shake', subcategory: 'Nutritional Drinks', description: 'Boosts strength and recovery.', price: 280, image: '/images/allmed.jpg' },
 ];
 
 const BabyMomCare = () => {

@@ -2,15 +2,15 @@ import React from 'react';
 import './SmokingCessation.css';
 
 const products = [
-  { name: "Nicotinell 2mg Mint Gum", description: "40% OFF", price: 180, image: "/images/health/nicotinell-mint.jpg", discount: "40% OFF" },
-  { name: "Nicotinell 2mg Fruit Gum", description: "10% OFF", price: 270, image: "/images/health/nicotinell-fruit.jpg", discount: "10% OFF" },
-  { name: "Nicotinell 2mg Plain Gum", description: "10% OFF", price: 270, image: "/images/health/nicotinell-plain.jpg", discount: "10% OFF" },
-  { name: "Nicotinell 2mg Patch", description: "20% OFF", price: 320, image: "/images/health/nicotinell-patch.jpg", discount: "20% OFF" },
-  { name: "Zonnic 2mg Mint Gum", description: "10% OFF", price: 270, image: "/images/health/zonnic-2mg.jpg", discount: "10% OFF" },
-  { name: "Zonnic 4mg Mint Gum", description: "10% OFF", price: 270, image: "/images/health/zonnic-4mg.jpg", discount: "10% OFF" },
-  { name: "Nicorette 2mg Mint Plus Gum", description: "20% OFF", price: 320, image: "/images/health/nicorette-2mg.jpg", discount: "20% OFF" },
-  { name: "Nicorette 4mg Mint Plus Gum", description: "20% OFF", price: 320, image: "/images/health/nicorette-4mg.jpg", discount: "20% OFF" },
-  { name: "Nicogum 2mg Mint Gum", description: "10% OFF", price: 270, image: "/images/health/nicogum.jpg", discount: "10% OFF" },
+  { name: "Nicotinell 2mg Mint Gum", description: "40% OFF", price: 180, image: "/images/allmed.jpg", discount: "40% OFF" },
+  { name: "Nicotinell 2mg Fruit Gum", description: "10% OFF", price: 270, image: "/images/allmed.jpg", discount: "10% OFF" },
+  { name: "Nicotinell 2mg Plain Gum", description: "10% OFF", price: 270, image: "/images/allmed.jpg", discount: "10% OFF" },
+  { name: "Nicotinell 2mg Patch", description: "20% OFF", price: 320, image: "/images/allmed.jpg", discount: "20% OFF" },
+  { name: "Zonnic 2mg Mint Gum", description: "10% OFF", price: 270, image: "/images/allmed.jpg", discount: "10% OFF" },
+  { name: "Zonnic 4mg Mint Gum", description: "10% OFF", price: 270, image: "/images/allmed.jpg", discount: "10% OFF" },
+  { name: "Nicorette 2mg Mint Plus Gum", description: "20% OFF", price: 320, image: "/images/allmed.jpg", discount: "20% OFF" },
+  { name: "Nicorette 4mg Mint Plus Gum", description: "20% OFF", price: 320, image: "/images/allmed.jpg", discount: "20% OFF" },
+  { name: "Nicogum 2mg Mint Gum", description: "10% OFF", price: 270, image: "/images/allmed.jpg", discount: "10% OFF" },
 ];
 
 const SmokingCessation = () => {

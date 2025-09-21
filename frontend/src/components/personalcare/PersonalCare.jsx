@@ -47,10 +47,11 @@ const PersonalCare = () => {
           <div key={cat} className="col-md-2 col-6 mb-3">
             <div className="category-card text-center shadow-sm" onClick={() => handleCategoryClick(cat)}>
               <img
-                src={`/icons/${cat.toLowerCase().replace(/ /g, '-')}.png`}
+                src={`/images/${cat.toLowerCase().replace(/ /g, '-')}.png`}
                 alt={cat}
                 className="category-icon mb-2"
               />
+
               <h6 className="text-primary">{cat}</h6>
             </div>
           </div>

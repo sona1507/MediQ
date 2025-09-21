@@ -11,12 +11,12 @@ const filterOptions = [
 ];
 
 const products = [
-  { name: 'Coconut Hair Oil', subcategory: 'Hair Oils', description: 'Nourishes scalp and strengthens roots.', price: 120, image: '/images/haircare/hair-oil.jpg' },
-  { name: 'Anti-Dandruff Shampoo', subcategory: 'Hair Shampoo', description: 'Fights flakes and itch.', price: 220, image: '/images/haircare/shampoo.jpg' },
-  { name: 'Keratin Conditioner', subcategory: 'Hair Conditioners', description: 'Smoothens and detangles hair.', price: 180, image: '/images/haircare/conditioner.jpg' },
-  { name: 'Biotin Hair Supplements', subcategory: 'Hair Supplements', description: 'Supports hair growth and thickness.', price: 300, image: '/images/haircare/supplements.jpg' },
-  { name: 'Natural Hair Colour', subcategory: 'Hair Colour', description: 'Ammonia-free herbal dye.', price: 250, image: '/images/haircare/colour.jpg' },
-  { name: 'Argan Hair Serum', subcategory: 'Hair Serum', description: 'Adds shine and reduces frizz.', price: 200, image: '/images/haircare/serum.jpg' },
+  { name: 'Coconut Hair Oil', subcategory: 'Hair Oils', description: 'Nourishes scalp and strengthens roots.', price: 120, image: '/images/allmed.jpg' },
+  { name: 'Anti-Dandruff Shampoo', subcategory: 'Hair Shampoo', description: 'Fights flakes and itch.', price: 220, image: '/images/allmed.jpg' },
+  { name: 'Keratin Conditioner', subcategory: 'Hair Conditioners', description: 'Smoothens and detangles hair.', price: 180, image: '/images/allmed.jpg' },
+  { name: 'Biotin Hair Supplements', subcategory: 'Hair Supplements', description: 'Supports hair growth and thickness.', price: 300, image: '/images/allmed.jpg' },
+  { name: 'Natural Hair Colour', subcategory: 'Hair Colour', description: 'Ammonia-free herbal dye.', price: 250, image: '/images/allmed.jpg' },
+  { name: 'Argan Hair Serum', subcategory: 'Hair Serum', description: 'Adds shine and reduces frizz.', price: 200, image: '/images/allmed.jpg' },
 ];
 
 const HairCare = () => {

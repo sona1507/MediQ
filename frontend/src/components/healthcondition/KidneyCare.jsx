@@ -2,20 +2,20 @@ import React from 'react';
 import './KidneyCare.css';
 
 const products = [
-  { name: "Ketokind Tablet 10's", description: "50% OFF", price: 22.75, image: "/images/health/ketokind.jpg", discount: "50% OFF" },
-  { name: "Uriston-K Suspension 100ml", description: "50% OFF", price: 67.5, image: "/images/health/uriston-k.jpg", discount: "50% OFF" },
-  { name: "Stoncare Tablet 10's", description: "37% OFF", price: 27.3, image: "/images/health/stoncare.jpg", discount: "37% OFF" },
-  { name: "Prostonil Tablet 10's", description: "5% OFF", price: 42.75, image: "/images/health/prostonil.jpg", discount: "5% OFF" },
-  { name: "Neeri Tablet 30's", description: "13% OFF", price: 87, image: "/images/health/neeri-tab.jpg", discount: "13% OFF" },
-  { name: "Ami Neeri-Kft Syrup 200ml", description: "13% OFF", price: 135, image: "/images/health/neeri-kft.jpg", discount: "13% OFF" },
-  { name: "Himalaya Himpipha Tablet 60's", description: "13% OFF", price: 135, image: "/images/health/himpipha.jpg", discount: "13% OFF" },
-  { name: "Neeri Syrup 200ml", description: "13% OFF", price: 135, image: "/images/health/neeri-syrup.jpg", discount: "13% OFF" },
-  { name: "Himalaya Cystone Tablet 60", description: "13% OFF", price: 135, image: "/images/health/cystone.jpg", discount: "13% OFF" },
-  { name: "Photant Tablet 10's", description: "13% OFF", price: 27.3, image: "/images/health/photant.jpg", discount: "13% OFF" },
-  { name: "Carbac Tablet 10's", description: "13% OFF", price: 27.3, image: "/images/health/carbac.jpg", discount: "13% OFF" },
-  { name: "Cramwel Capsule 10", description: "13% OFF", price: 27.3, image: "/images/health/cramwel.jpg", discount: "13% OFF" },
-  { name: "Uriston Capsule 10's", description: "13% OFF", price: 27.3, image: "/images/health/uriston.jpg", discount: "13% OFF" },
-  { name: "Protinule Capsule 10's", description: "13% OFF", price: 27.3, image: "/images/health/protinule.jpg", discount: "13% OFF" },
+  { name: "Ketokind Tablet 10's", description: "50% OFF", price: 22.75, image: "/images/allmed.jpg", discount: "50% OFF" },
+  { name: "Uriston-K Suspension 100ml", description: "50% OFF", price: 67.5, image: "/images/allmed.jpg", discount: "50% OFF" },
+  { name: "Stoncare Tablet 10's", description: "37% OFF", price: 27.3, image: "/images/allmed.jpg", discount: "37% OFF" },
+  { name: "Prostonil Tablet 10's", description: "5% OFF", price: 42.75, image: "/images/allmed.jpg", discount: "5% OFF" },
+  { name: "Neeri Tablet 30's", description: "13% OFF", price: 87, image: "/images/allmed.jpg", discount: "13% OFF" },
+  { name: "Ami Neeri-Kft Syrup 200ml", description: "13% OFF", price: 135, image: "/images/allmed.jpg", discount: "13% OFF" },
+  { name: "Himalaya Himpipha Tablet 60's", description: "13% OFF", price: 135, image: "/images/allmed.jpg", discount: "13% OFF" },
+  { name: "Neeri Syrup 200ml", description: "13% OFF", price: 135, image: "/images/allmed.jpg", discount: "13% OFF" },
+  { name: "Himalaya Cystone Tablet 60", description: "13% OFF", price: 135, image: "/images/allmed.jpg", discount: "13% OFF" },
+  { name: "Photant Tablet 10's", description: "13% OFF", price: 27.3, image: "/images/allmed.jpg", discount: "13% OFF" },
+  { name: "Carbac Tablet 10's", description: "13% OFF", price: 27.3, image: "/images/allmed.jpg", discount: "13% OFF" },
+  { name: "Cramwel Capsule 10", description: "13% OFF", price: 27.3, image: "/images/allmed.jpg", discount: "13% OFF" },
+  { name: "Uriston Capsule 10's", description: "13% OFF", price: 27.3, image: "/images/allmed.jpg", discount: "13% OFF" },
+  { name: "Protinule Capsule 10's", description: "13% OFF", price: 27.3, image: "/images/allmed.jpg", discount: "13% OFF" },
 ];
 
 const KidneyCare = () => {

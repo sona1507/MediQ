@@ -2,15 +2,15 @@ import React from 'react';
 import './LiverCare.css';
 
 const products = [
-  { name: "Himalaya Liv.52 Tablet 10", description: "5% OFF", price: 95, image: "/images/health/liv52-tab.jpg", discount: "5% OFF" },
-  { name: "Himalaya Liv.52 Syrup 200ml", description: "10% OFF", price: 135, image: "/images/health/liv52-syrup.jpg", discount: "10% OFF" },
-  { name: "Livrite Capsule 10", description: "15% OFF", price: 120, image: "/images/health/livrite.jpg", discount: "15% OFF" },
-  { name: "Livercare Syrup 200ml", description: "18% OFF", price: 135, image: "/images/health/livercare.jpg", discount: "18% OFF" },
-  { name: "Livon Syrup 200ml", description: "10% OFF", price: 135, image: "/images/health/livon.jpg", discount: "10% OFF" },
-  { name: "Ami Liv Syrup 200ml", description: "10% OFF", price: 135, image: "/images/health/ami-liv.jpg", discount: "10% OFF" },
-  { name: "Kananon Liv Syrup 200ml", description: "10% OFF", price: 135, image: "/images/health/kananon.jpg", discount: "10% OFF" },
-  { name: "Live52 DS Syrup 200ml", description: "10% OFF", price: 135, image: "/images/health/live52-ds.jpg", discount: "10% OFF" },
-  { name: "Hepa Capsule 10", description: "10% OFF", price: 135, image: "/images/health/hepa.jpg", discount: "10% OFF" },
+  { name: "Himalaya Liv.52 Tablet 10", description: "5% OFF", price: 95, image: "/images/allmed.jpg", discount: "5% OFF" },
+  { name: "Himalaya Liv.52 Syrup 200ml", description: "10% OFF", price: 135, image: "/images/allmed.jpg", discount: "10% OFF" },
+  { name: "Livrite Capsule 10", description: "15% OFF", price: 120, image: "/images/allmed.jpg", discount: "15% OFF" },
+  { name: "Livercare Syrup 200ml", description: "18% OFF", price: 135, image: "/images/allmed.jpg", discount: "18% OFF" },
+  { name: "Livon Syrup 200ml", description: "10% OFF", price: 135, image: "/images/allmed.jpg", discount: "10% OFF" },
+  { name: "Ami Liv Syrup 200ml", description: "10% OFF", price: 135, image: "/images/allmed.jpg", discount: "10% OFF" },
+  { name: "Kananon Liv Syrup 200ml", description: "10% OFF", price: 135, image: "/images/allmed.jpg", discount: "10% OFF" },
+  { name: "Live52 DS Syrup 200ml", description: "10% OFF", price: 135, image: "/images/allmed.jpg", discount: "10% OFF" },
+  { name: "Hepa Capsule 10", description: "10% OFF", price: 135, image: "/images/allmed.jpg", discount: "10% OFF" },
 ];
 
 const LiverCare = () => {
