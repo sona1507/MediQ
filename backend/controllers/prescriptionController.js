@@ -9,8 +9,8 @@ export const uploadPrescription = async (req, res) => {
     }
 
     const { userId } = req.body;
-    if (!userId) {
-      return res.status(400).json({ message: "Missing userId" });
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Missing or invalid userId" });
     }
 
     const prescription = new Prescription({
@@ -23,19 +23,23 @@ export const uploadPrescription = async (req, res) => {
     });
 
     await prescription.save();
-    res.status(201).json({ message: "Prescription uploaded", prescription });
+    res.status(201).json({ message: "Prescription uploaded successfully", prescription });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ Upload error:", error);
+    res.status(500).json({ message: "Failed to upload prescription", error: error.message });
   }
 };
 
 // ✅ Get all prescriptions
 export const getPrescriptions = async (req, res) => {
   try {
-    const prescriptions = await Prescription.find().populate("userId", "name email");
+    const prescriptions = await Prescription.find()
+      .populate("userId", "userId name email")
+      .populate("statusUpdatedBy", "userId name email"); // ✅ pharmacist info
     res.json(prescriptions);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ Fetch error:", error);
+    res.status(500).json({ message: "Failed to fetch prescriptions", error: error.message });
   }
 };
 
@@ -43,20 +47,37 @@ export const getPrescriptions = async (req, res) => {
 export const approvePrescription = async (req, res) => {
   try {
     const { id } = req.params;
+    const { reviewedBy, notes } = req.body;
 
-    const prescription = await Prescription.findByIdAndUpdate(
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid prescription ID" });
+    }
+
+    if (!reviewedBy || !mongoose.Types.ObjectId.isValid(reviewedBy)) {
+      return res.status(400).json({ message: "Missing or invalid reviewer ID" });
+    }
+
+    const updated = await Prescription.findByIdAndUpdate(
       id,
-      { status: "approved" },
+      {
+        status: "approved",
+        statusUpdatedBy: reviewedBy,
+        notes: notes || "Approved without notes",
+        reviewedAt: new Date()
+      },
       { new: true }
-    ).populate("userId", "name email");
+    )
+    .populate("userId", "userId name email")
+    .populate("statusUpdatedBy", "userId name email");
 
-    if (!prescription) {
+    if (!updated) {
       return res.status(404).json({ message: "Prescription not found" });
     }
 
-    res.json({ message: "Prescription approved", prescription });
+    res.json({ message: "Prescription approved successfully", prescription: updated });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ Approval error:", error);
+    res.status(500).json({ message: "Failed to approve prescription", error: error.message });
   }
 };
 
@@ -64,19 +85,36 @@ export const approvePrescription = async (req, res) => {
 export const rejectPrescription = async (req, res) => {
   try {
     const { id } = req.params;
+    const { reviewedBy, notes } = req.body;
 
-    const prescription = await Prescription.findByIdAndUpdate(
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid prescription ID" });
+    }
+
+    if (!reviewedBy || !mongoose.Types.ObjectId.isValid(reviewedBy)) {
+      return res.status(400).json({ message: "Missing or invalid reviewer ID" });
+    }
+
+    const updated = await Prescription.findByIdAndUpdate(
       id,
-      { status: "rejected" },
+      {
+        status: "rejected",
+        statusUpdatedBy: reviewedBy,
+        notes: notes || "Rejected without notes",
+        reviewedAt: new Date()
+      },
       { new: true }
-    ).populate("userId", "name email");
+    )
+    .populate("userId", "userId name email")
+    .populate("statusUpdatedBy", "userId name email");
 
-    if (!prescription) {
+    if (!updated) {
       return res.status(404).json({ message: "Prescription not found" });
     }
 
-    res.json({ message: "Prescription rejected", prescription });
+    res.json({ message: "Prescription rejected successfully", prescription: updated });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ Rejection error:", error);
+    res.status(500).json({ message: "Failed to reject prescription", error: error.message });
   }
 };

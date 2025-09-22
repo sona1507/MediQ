@@ -113,6 +113,27 @@ function Navbar({ scrolled }) {
                 </ul>
               )}
 
+              {/* No suggestions fallback */}
+              {query.trim() && suggestions.length === 0 && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    background: "#fff",
+                    border: "1px solid #ddd",
+                    borderRadius: "6px",
+                    padding: "10px",
+                    fontSize: "14px",
+                    color: "#999",
+                    zIndex: 1050,
+                  }}
+                >
+                  No matches found.
+                </div>
+              )}
+
               {/* Selected Medicine Details */}
               {selectedMedicine && (
                 <div
@@ -144,10 +165,10 @@ function Navbar({ scrolled }) {
               <Link className="nav-link" to="/">🏠 Home</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/medicines">💊 Shop</Link>
+              <Link className="nav-link" to="/medicines">💊 Medicines</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/personal-care">🧼 Personal Care</Link> {/* ✅ New Link */}
+              <Link className="nav-link" to="/personal-care">🧼 Personal Care</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/upload">📤 Upload</Link>

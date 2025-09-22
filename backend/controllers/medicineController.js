@@ -1,6 +1,6 @@
 import Medicine from "../models/Medicine.js";
 
-// ✅ Add a new medicine
+// ✅ Add a new medicine with optional image
 export const addMedicine = async (req, res) => {
   try {
     const {
@@ -14,7 +14,6 @@ export const addMedicine = async (req, res) => {
       prescriptionRequired = "Not Required"
     } = req.body;
 
-    // Basic validation
     if (!name?.trim() || !category?.trim() || !Array.isArray(symptoms) || symptoms.length === 0) {
       return res.status(400).json({ message: "Name, category, and symptoms array are required" });
     }
@@ -22,6 +21,8 @@ export const addMedicine = async (req, res) => {
     if (price < 0 || stock < 0) {
       return res.status(400).json({ message: "Price and stock must be non-negative" });
     }
+
+    const imagePath = req.file ? `/uploads/medicines/${req.file.filename}` : "";
 
     const newMedicine = new Medicine({
       name: name.trim(),
@@ -32,6 +33,7 @@ export const addMedicine = async (req, res) => {
       description: description.trim(),
       dosage: dosage.trim(),
       prescriptionRequired: prescriptionRequired.trim(),
+      image: imagePath,
     });
 
     await newMedicine.save();
@@ -50,11 +52,11 @@ export const getMedicines = async (req, res) => {
 
     if (name?.trim()) query.name = { $regex: name.trim(), $options: "i" };
     if (category?.trim()) query.category = { $regex: category.trim(), $options: "i" };
-    if (symptom?.trim()) query.symptoms = { $regex: symptom.trim(), $options: "i" };
+    if (symptom?.trim()) query.symptoms = { $elemMatch: { $regex: symptom.trim(), $options: "i" } };
 
     const medicines = await Medicine.find(query)
       .sort({ name: 1 })
-      .collation({ locale: "en", strength: 2 }) // ✅ Case-insensitive sort
+      .collation({ locale: "en", strength: 2 })
       .lean()
       .select("-__v");
 
@@ -62,6 +64,20 @@ export const getMedicines = async (req, res) => {
   } catch (error) {
     console.error("❌ Get medicines error:", error.message);
     res.status(500).json({ message: "Failed to fetch medicines", error: error.message });
+  }
+};
+
+// ✅ Get a single medicine by ID
+export const getMedicineById = async (req, res) => {
+  try {
+    const medicine = await Medicine.findById(req.params.id).lean().select("-__v");
+    if (!medicine) {
+      return res.status(404).json({ message: "Medicine not found" });
+    }
+    res.json(medicine);
+  } catch (error) {
+    console.error("❌ Get medicine by ID error:", error.message);
+    res.status(500).json({ message: "Failed to fetch medicine", error: error.message });
   }
 };
 
@@ -77,7 +93,7 @@ export const searchMedicines = async (req, res) => {
       $or: [
         { name: regex },
         { category: regex },
-        { symptoms: { $regex: regex } } // ✅ Direct match on array
+        { symptoms: { $elemMatch: { $regex: regex } } }
       ]
     })
       .limit(20)
@@ -134,3 +150,5 @@ export const getMedicinesByIds = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch medicines", error: error.message });
   }
 };
+
+// ✅ Export all controllers

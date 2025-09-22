@@ -5,7 +5,12 @@ import api from "../api/axios";
 function Register() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: "", email: "", mobile: "", password: "", confirmPassword: ""
+    name: "",
+    email: "",
+    mobile: "",
+    password: "",
+    confirmPassword: "",
+    role: "user"
   });
   const [loading, setLoading] = useState(false);
 
@@ -14,17 +19,38 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+
+    const { name, email, mobile, password, confirmPassword, role } = formData;
+
+    if (password !== confirmPassword) {
+      alert("❌ Passwords do not match!");
       return;
     }
+
     try {
       setLoading(true);
-      await api.post("/auth/register", formData);
-      alert("✅ Registration successful!");
-      setFormData({ name: "", email: "", mobile: "", password: "", confirmPassword: "" });
+
+      const payload = {
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        mobile: mobile.trim(),
+        password: password.trim(),
+        role: role.trim().toLowerCase()
+      };
+
+      const res = await api.post("/auth/register", payload);
+      alert(res.data.message || "✅ Registration successful!");
+      setFormData({
+        name: "",
+        email: "",
+        mobile: "",
+        password: "",
+        confirmPassword: "",
+        role: "user"
+      });
       navigate("/login");
     } catch (err) {
+      console.error("❌ Registration error:", err);
       alert(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
@@ -87,6 +113,15 @@ function Register() {
             required
             autoComplete="new-password"
           />
+          <select
+            name="role"
+            className="form-select mb-3"
+            value={formData.role}
+            onChange={handleChange}
+          >
+            <option value="user">User</option>
+            <option value="pharmacist">Pharmacist</option>
+          </select>
           <button className="btn btn-success w-100 mb-3" disabled={loading}>
             {loading ? "Registering..." : "Register"}
           </button>

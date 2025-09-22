@@ -68,7 +68,7 @@ const HealthCondition = () => {
       {/* Hero Section */}
       <div className="hero-section text-center mb-5">
         <h1 className="display-5 fw-bold text-primary">🩺 Health Condition Products</h1>
-        <p className="lead text-muted">Targeted care for every health need—from joints to mental wellness</p>
+        
       </div>
 
       {/* Category Cards */}

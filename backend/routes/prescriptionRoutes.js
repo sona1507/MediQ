@@ -8,16 +8,13 @@ import {
   rejectPrescription
 } from "../controllers/prescriptionController.js";
 
-// Optional: Uncomment to restrict approval/rejection to pharmacists
-// import { requirePharmacist } from "../middleware/requirePharmacist.js";
-
 const router = express.Router();
 
 /**
  * @route   POST /api/prescriptions/upload
  * @desc    Upload prescription file
  */
-router.post("/upload", upload.single("prescription"), uploadPrescription);
+router.post("/upload", upload.single("file"), uploadPrescription); // ✅ fixed multer field name
 
 /**
  * @route   POST /api/prescriptions/:id/items
@@ -56,7 +53,8 @@ router.post("/:id/items", async (req, res) => {
 
     res.json({ message: "Medicines attached", prescription: updated });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ Attach error:", error);
+    res.status(500).json({ message: "Failed to attach medicines", error: error.message });
   }
 });
 
@@ -64,21 +62,13 @@ router.post("/:id/items", async (req, res) => {
  * @route   PATCH /api/prescriptions/:id/approve
  * @desc    Approve prescription
  */
-router.patch(
-  "/:id/approve",
-  // requirePharmacist,
-  approvePrescription
-);
+router.patch("/:id/approve", approvePrescription);
 
 /**
  * @route   PATCH /api/prescriptions/:id/reject
  * @desc    Reject prescription
  */
-router.patch(
-  "/:id/reject",
-  // requirePharmacist,
-  rejectPrescription
-);
+router.patch("/:id/reject", rejectPrescription);
 
 /**
  * @route   GET /api/prescriptions/:id/full
@@ -86,7 +76,8 @@ router.patch(
  */
 router.get("/:id/full", async (req, res) => {
   try {
-    const pres = await Prescription.findById(req.params.id).populate("items.medicine approvedMedicines");
+    const pres = await Prescription.findById(req.params.id)
+      .populate("items.medicine approvedMedicines userId statusUpdatedBy", "userId name email");
 
     if (!pres) {
       return res.status(404).json({ message: "Prescription not found" });
@@ -94,7 +85,8 @@ router.get("/:id/full", async (req, res) => {
 
     res.json(pres);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ Full fetch error:", error);
+    res.status(500).json({ message: "Failed to fetch full prescription", error: error.message });
   }
 });
 
@@ -104,10 +96,13 @@ router.get("/:id/full", async (req, res) => {
  */
 router.get("/approved/all", async (req, res) => {
   try {
-    const prescriptions = await Prescription.find({ status: "approved" }).populate("items.medicine approvedMedicines");
+    const prescriptions = await Prescription.find({ status: "approved" })
+      .populate("items.medicine approvedMedicines userId statusUpdatedBy", "userId name email");
+
     res.json(prescriptions);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ Approved fetch error:", error);
+    res.status(500).json({ message: "Failed to fetch approved prescriptions", error: error.message });
   }
 });
 
@@ -121,7 +116,8 @@ router.post("/", async (req, res) => {
     await prescription.save();
     res.status(201).json(prescription);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ Manual create error:", error);
+    res.status(500).json({ message: "Failed to create prescription", error: error.message });
   }
 });
 
@@ -131,7 +127,8 @@ router.post("/", async (req, res) => {
  */
 router.get("/:id", async (req, res) => {
   try {
-    const prescription = await Prescription.findById(req.params.id).populate("approvedMedicines items.medicine");
+    const prescription = await Prescription.findById(req.params.id)
+      .populate("approvedMedicines items.medicine userId statusUpdatedBy", "userId name email");
 
     if (!prescription) {
       return res.status(404).json({ message: "Prescription not found" });
@@ -139,7 +136,8 @@ router.get("/:id", async (req, res) => {
 
     res.json(prescription);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ Single fetch error:", error);
+    res.status(500).json({ message: "Failed to fetch prescription", error: error.message });
   }
 });
 
@@ -149,10 +147,13 @@ router.get("/:id", async (req, res) => {
  */
 router.get("/", async (req, res) => {
   try {
-    const prescriptions = await Prescription.find().populate("approvedMedicines items.medicine");
+    const prescriptions = await Prescription.find()
+      .populate("approvedMedicines items.medicine userId statusUpdatedBy", "userId name email");
+
     res.json(prescriptions);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ All fetch error:", error);
+    res.status(500).json({ message: "Failed to fetch prescriptions", error: error.message });
   }
 });
 
@@ -170,7 +171,8 @@ router.delete("/:id", async (req, res) => {
 
     res.json({ message: "Prescription deleted successfully" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("❌ Delete error:", error);
+    res.status(500).json({ message: "Failed to delete prescription", error: error.message });
   }
 });
 

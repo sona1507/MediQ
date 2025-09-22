@@ -1,65 +1,96 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../api/axios";
 
 export default function Medicines() {
-  const [q, setQ] = useState("");
+  const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
-  const [meds, setMeds] = useState([]);
+  const [medicines, setMedicines] = useState([]);
+  const [selectedId, setSelectedId] = useState(null);
+  const navigate = useNavigate();
 
-  async function fetchAll() {
-    setLoading(true);
-    try {
-      const url = q?.trim()
-        ? `/api/medicines?search=${encodeURIComponent(q)}`
-        : `/api/medicines`;
-      const { data } = await api.get(url);
-      setMeds(Array.isArray(data) ? data : []);
-    } catch (e) {
-      setMeds([]);
-    } finally {
-      setLoading(false);
-    }
-  }
+  useEffect(() => {
+    const fetchMedicines = async () => {
+      setLoading(true);
+      try {
+        const url = query.trim()
+          ? `/medicines/search?q=${encodeURIComponent(query)}`
+          : `/medicines`;
+        const { data } = await api.get(url);
+        setMedicines(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching medicines:", error);
+        setMedicines([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  useEffect(() => { fetchAll(); }, []);
+    const debounce = setTimeout(fetchMedicines, 300);
+    return () => clearTimeout(debounce);
+  }, [query]);
+
+  const handleView = (id) => {
+    navigate(`/buy/${id}`);
+  };
 
   return (
     <div className="container my-5">
-      <h2 className="mb-4 text-center">Search Medicines</h2>
+      <h2 className="mb-4 text-center text-primary">🩺 Browse Medicines</h2>
 
       {/* Search Bar */}
       <div className="input-group mb-4">
         <input
           className="form-control"
           placeholder="Search by name, category, or symptoms..."
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
         />
-        <button onClick={fetchAll} className="btn btn-primary">Search</button>
       </div>
 
+      {/* Loading State */}
       {loading && <p className="text-center">Loading…</p>}
-      {!loading && meds.length === 0 && (
+
+      {/* Empty State */}
+      {!loading && medicines.length === 0 && (
         <p className="text-center text-muted">No medicines found.</p>
       )}
 
-      <div className="row g-3">
-        {meds.map((m) => (
-          <div key={m._id} className="col-md-4">
-            <div className="card shadow h-100">
-              <div className="card-body">
-                <h5 className="card-title">{m.name}</h5>
-                <p className="card-text">
-                  {m.category} • ₹{m.price} • Stock: {m.stock}
-                </p>
-                {m.symptoms?.length && (
-                  <p><b>Symptoms:</b> {m.symptoms.join(", ")}</p>
-                )}
-                {m.dosage && <p><b>Dosage:</b> {m.dosage}</p>}
-                <p>{m.description}</p>
-                <p><b>Prescription:</b> {m.prescriptionRequired ? "Required" : "Not Required"}</p>
+      {/* Medicine List */}
+      <div className="list-group">
+        {medicines.map((med) => (
+          <div key={med._id} className="list-group-item">
+            {/* Collapsed View */}
+            <div
+              className="d-flex justify-content-between align-items-center"
+              style={{ cursor: "pointer" }}
+              onClick={() =>
+                setSelectedId(selectedId === med._id ? null : med._id)
+              }
+            >
+              <div>
+                <strong>{med.name}</strong>
+                <div className="text-muted small">{med.category}</div>
               </div>
+              <span className="text-primary">
+                {selectedId === med._id ? "▲" : "▼"}
+              </span>
             </div>
+
+            {/* Expanded View */}
+            {selectedId === med._id && (
+              <div className="mt-3 border-top pt-3">
+                <p><b>Category:</b> {med.category}</p>
+                <p><b>Description:</b> {med.description}</p>
+
+                <button
+                  className="btn btn-outline-primary w-100 mt-3"
+                  onClick={() => handleView(med._id)}
+                >
+                  View
+                </button>
+              </div>
+            )}
           </div>
         ))}
       </div>

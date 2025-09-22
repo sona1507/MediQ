@@ -21,23 +21,31 @@ const allowedOrigins = [
   "http://localhost:3001",
   "http://localhost:3002"
 ];
+
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      console.warn(`❌ CORS blocked request from: ${origin}`);
+      callback(null, false); // ✅ Deny silently without crashing
     }
   },
   credentials: true,
 }));
 
-// ✅ Ensure uploads folder exists
-const UPLOAD_DIR = path.join(process.cwd(), "uploads", "prescriptions");
-fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+// ===============================
+// Upload Directories
+// ===============================
+const PRESCRIPTION_DIR = path.join(process.cwd(), "uploads", "prescriptions");
+const MEDICINE_IMAGE_DIR = path.join(process.cwd(), "uploads", "medicines");
+
+fs.mkdirSync(PRESCRIPTION_DIR, { recursive: true });
+fs.mkdirSync(MEDICINE_IMAGE_DIR, { recursive: true });
 
 // ✅ Serve uploaded files statically
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+app.use("/uploads/prescriptions", express.static(PRESCRIPTION_DIR));
+app.use("/uploads/medicines", express.static(MEDICINE_IMAGE_DIR));
 
 // ===============================
 // Route Imports
@@ -53,7 +61,7 @@ import authRoutes from "./routes/authRoutes.js";
 // ===============================
 app.use("/api/orders", orderRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/medicines", medicineRoutes);
+app.use("/api/medicines", medicineRoutes); // ✅ Includes GET /:id
 app.use("/api/incidences", incidencesRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 

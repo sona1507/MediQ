@@ -530,4 +530,86 @@ position: relative;
   padding: 40px 60px;
 }
 
+
 }
+/* ===============================
+   MEDICINES PAGE - UPDATED
+================================= */
+.medicine-list {
+  padding: 20px;
+}
+
+.medicine-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.medicine-card:hover {
+  background-color: #f8f9fa;
+}
+
+.medicine-card .title {
+  font-weight: 600;
+  font-size: 16px;
+  color: #007bff;
+}
+
+.medicine-card .subtitle {
+  font-size: 14px;
+  color: #666;
+}
+
+.medicine-details {
+  margin-top: 12px;
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+  font-size: 14px;
+  color: #444;
+}
+
+.medicine-details img {
+  height: 160px;
+  object-fit: contain;
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  max-width: 100%;
+}
+
+.medicine-details p {
+  margin-bottom: 6px;
+}
+
+.medicine-details .btn-success {
+  margin-top: 12px;
+  font-size: 14px;
+  padding: 8px 12px;
+  width: 100%;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .medicine-card .title {
+    font-size: 15px;
+  }
+
+  .medicine-card .subtitle {
+    font-size: 13px;
+  }
+
+  .medicine-details {
+    font-size: 13px;
+  }
+
+  .medicine-details img {
+    height: 120px;
+  }
+}
+
