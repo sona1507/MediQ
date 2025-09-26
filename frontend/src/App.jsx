@@ -10,6 +10,8 @@ import PharmacistDashboard from "./pages/PharmacistDashboard";
 import Unauthorized from "./pages/Unauthorized";
 import Medicines from "./pages/Medicines";
 import BuyMedicine from "./pages/BuyMedicine";
+import MedicineManager from "./pages/MedicineManager";
+import UserProfile from "./components/UserProfile"; // ✅ Corrected import
 import api from "./api/axios";
 import "./App.css";
 import "./index.css";
@@ -42,7 +44,7 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
-  const [selectedMedicineId, setSelectedMedicineId] = useState(null); // ✅ Added
+  const [selectedMedicineId, setSelectedMedicineId] = useState(null);
 
   useEffect(() => {
     const loadUser = () => {
@@ -92,7 +94,7 @@ export default function App() {
       <Navbar scrolled={scrolled} query={query} setQuery={setQuery} />
       <CategoryNavbar scrolled={scrolled} />
 
-      {selectedMedicineId && <Navigate to={`/buy/${selectedMedicineId}`} />} {/* ✅ Redirect */}
+      {selectedMedicineId && <Navigate to={`/buy/${selectedMedicineId}`} />}
 
       {suggestions.length > 0 && (
         <div className="container mt-5">
@@ -113,7 +115,7 @@ export default function App() {
                     </div>
                     <button
                       className="btn btn-outline-primary mt-3"
-                      onClick={() => setSelectedMedicineId(med._id)} // ✅ Trigger redirect
+                      onClick={() => setSelectedMedicineId(med._id)}
                     >
                       View
                     </button>
@@ -127,7 +129,7 @@ export default function App() {
 
       <Routes>
         {/* Core Pages */}
-        <Route path="/" element={<Home scrolled={scrolled} />} />
+        <Route path="/" element={<Home scrolled={scrolled} user={user} />} /> {/* ✅ Pass user to Home */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/upload" element={<UploadPrescription user={user} />} />
@@ -141,6 +143,17 @@ export default function App() {
             )
           }
         />
+        <Route
+          path="/manage-medicines"
+          element={
+            user?.role === "pharmacist" ? (
+              <MedicineManager user={user} />
+            ) : (
+              <Navigate to="/unauthorized" />
+            )
+          }
+        />
+        <Route path="/profile" element={<UserProfile user={user} />} /> {/* ✅ Profile route */}
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<Navigate to="/" />} />
 

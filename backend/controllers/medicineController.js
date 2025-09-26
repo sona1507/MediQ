@@ -3,7 +3,7 @@ import Medicine from "../models/Medicine.js";
 // ✅ Add a new medicine with optional image
 export const addMedicine = async (req, res) => {
   try {
-    const {
+    let {
       name,
       category,
       symptoms,
@@ -13,6 +13,15 @@ export const addMedicine = async (req, res) => {
       dosage = "",
       prescriptionRequired = "Not Required"
     } = req.body;
+
+    // ✅ Parse symptoms if sent as JSON string
+    if (typeof symptoms === "string") {
+      try {
+        symptoms = JSON.parse(symptoms);
+      } catch {
+        return res.status(400).json({ message: "Invalid symptoms format" });
+      }
+    }
 
     if (!name?.trim() || !category?.trim() || !Array.isArray(symptoms) || symptoms.length === 0) {
       return res.status(400).json({ message: "Name, category, and symptoms array are required" });
@@ -41,6 +50,43 @@ export const addMedicine = async (req, res) => {
   } catch (error) {
     console.error("❌ Add medicine error:", error.message);
     res.status(500).json({ message: "Failed to add medicine", error: error.message });
+  }
+};
+
+// ✅ Update a medicine by ID
+export const updateMedicineById = async (req, res) => {
+  try {
+    const updates = { ...req.body };
+
+    if (updates.symptoms && typeof updates.symptoms === "string") {
+      try {
+        updates.symptoms = JSON.parse(updates.symptoms);
+      } catch {
+        return res.status(400).json({ message: "Invalid symptoms format" });
+      }
+    }
+
+    if (Array.isArray(updates.symptoms)) {
+      updates.symptoms = updates.symptoms.map(s => s.trim());
+    }
+
+    if (req.file) {
+      updates.image = `/uploads/medicines/${req.file.filename}`;
+    }
+
+    const updated = await Medicine.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+      runValidators: true
+    });
+
+    if (!updated) {
+      return res.status(404).json({ message: "Medicine not found" });
+    }
+
+    res.status(200).json({ message: "Medicine updated successfully", medicine: updated });
+  } catch (error) {
+    console.error("❌ Update medicine error:", error.message);
+    res.status(500).json({ message: "Failed to update medicine", error: error.message });
   }
 };
 
@@ -151,4 +197,3 @@ export const getMedicinesByIds = async (req, res) => {
   }
 };
 
-// ✅ Export all controllers

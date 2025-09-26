@@ -104,7 +104,7 @@ export default function BuyMedicine({ user }) {
 
   const imageUrl = medicine.image?.startsWith("/uploads")
     ? `http://localhost:5000${medicine.image}`
-    : medicine.image || "/images/azivo.jpg";
+    : medicine.image || "/images/default-medicine.jpg";
 
   return (
     <div className="container my-5">
@@ -117,6 +117,7 @@ export default function BuyMedicine({ user }) {
           <img
             src={imageUrl}
             alt={medicine.name}
+            onError={(e) => { e.target.src = "/images/default-medicine.jpg"; }}
             style={{
               height: "180px",
               objectFit: "contain",

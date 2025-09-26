@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import api from "../api/axios";
 
@@ -6,6 +6,10 @@ function Navbar({ scrolled }) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [selectedMedicine, setSelectedMedicine] = useState(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
+
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -36,6 +40,11 @@ function Navbar({ scrolled }) {
     setSelectedMedicine(med);
     setQuery(med.name);
     setSuggestions([]);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/login");
   };
 
   return (
@@ -168,19 +177,43 @@ function Navbar({ scrolled }) {
               <Link className="nav-link" to="/medicines">💊 Medicines</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/personal-care">🧼 Personal Care</Link>
-            </li>
-            <li className="nav-item">
               <Link className="nav-link" to="/upload">📤 Upload</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/cart">🛒 Cart</Link>
             </li>
-            <li className="nav-item">
-              <Link className="btn btn-outline-primary ms-lg-3 mt-2 mt-lg-0 px-3" to="/login">
-                🔑 Sign In / Join
-              </Link>
-            </li>
+
+            {/* 🔐 Auth Section */}
+            {!user ? (
+              <li className="nav-item">
+                <Link className="btn btn-outline-primary ms-lg-3 mt-2 mt-lg-0 px-3" to="/login">
+                  🔑 Sign In / Join
+                </Link>
+              </li>
+            ) : (
+              <li className="nav-item dropdown">
+                <button
+                  className="btn btn-outline-secondary dropdown-toggle ms-lg-3 mt-2 mt-lg-0 px-3"
+                  onClick={() => setShowDropdown(!showDropdown)}
+                >
+                  👤 {user.name || "User"}
+                </button>
+
+                {showDropdown && (
+                  <ul className="dropdown-menu dropdown-menu-end show" style={{ position: "absolute", right: 0 }}>
+                    <li className="dropdown-item text-muted">{user.email}</li>
+                    <li><Link className="dropdown-item" to="/orders">📦 Orders</Link></li>
+                    <li><Link className="dropdown-item" to="/profile">👤 My Profile</Link></li>
+                    <li><hr className="dropdown-divider" /></li>
+                    <li>
+                      <button className="dropdown-item text-danger" onClick={handleLogout}>
+                        🔓 Logout
+                      </button>
+                    </li>
+                  </ul>
+                )}
+              </li>
+            )}
           </ul>
         </div>
       </div>

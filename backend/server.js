@@ -4,7 +4,6 @@ import dotenv from "dotenv";
 import cors from "cors";
 import fs from "fs";
 import path from "path";
-// import morgan from "morgan"; // Optional: request logging
 
 dotenv.config();
 const app = express();
@@ -13,9 +12,8 @@ const app = express();
 // Middleware
 // ===============================
 app.use(express.json());
-// app.use(morgan("dev")); // Optional: enable for request logs
 
-// ✅ CORS setup: allow multiple frontend ports or fallback
+// ✅ CORS setup
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
@@ -28,7 +26,7 @@ app.use(cors({
       callback(null, true);
     } else {
       console.warn(`❌ CORS blocked request from: ${origin}`);
-      callback(null, false); // ✅ Deny silently without crashing
+      callback(null, false);
     }
   },
   credentials: true,
@@ -37,8 +35,9 @@ app.use(cors({
 // ===============================
 // Upload Directories
 // ===============================
-const PRESCRIPTION_DIR = path.join(process.cwd(), "uploads", "prescriptions");
-const MEDICINE_IMAGE_DIR = path.join(process.cwd(), "uploads", "medicines");
+const UPLOAD_BASE = path.join(process.cwd(), "uploads");
+const PRESCRIPTION_DIR = path.join(UPLOAD_BASE, "prescriptions");
+const MEDICINE_IMAGE_DIR = path.join(UPLOAD_BASE, "medicines");
 
 fs.mkdirSync(PRESCRIPTION_DIR, { recursive: true });
 fs.mkdirSync(MEDICINE_IMAGE_DIR, { recursive: true });
@@ -59,9 +58,9 @@ import authRoutes from "./routes/authRoutes.js";
 // ===============================
 // Routes
 // ===============================
-app.use("/api/orders", orderRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/medicines", medicineRoutes); // ✅ Includes GET /:id
+app.use("/api/orders", orderRoutes);
+app.use("/api/medicines", medicineRoutes);
 app.use("/api/incidences", incidencesRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
 
@@ -75,7 +74,11 @@ app.get("/", (req, res) => {
 // ===============================
 app.use((err, req, res, next) => {
   console.error("🔥 Server error:", err.message);
-  res.status(500).json({ message: "Internal Server Error", error: err.message });
+  res.status(500).json({
+    message: "Internal Server Error",
+    error: err.message,
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined
+  });
 });
 
 // ===============================

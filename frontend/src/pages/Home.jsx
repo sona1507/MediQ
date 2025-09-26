@@ -183,17 +183,29 @@ function Home() {
       </section>
 
       {/* ======= Quick Links ======= */}
+
       <section className="bg-light py-4">
         <div className="container text-center">
           <Link to="/search" className="btn btn-outline-primary m-2">
             Browse Medicines
           </Link>
-          <Link to="/upload" className="btn btn-outline-success m-2">
-            Upload Prescription
-          </Link>
-          <Link to="/orders" className="btn btn-outline-dark m-2">
-            View Orders
-          </Link>
+
+          {/* Show only for non-pharmacist users */}
+          {user?.role !== "pharmacist" && (
+            <>
+              <Link to="/upload" className="btn btn-outline-success m-2">
+                Upload Prescription
+              </Link>
+              <Link to="/orders" className="btn btn-outline-dark m-2">
+                View Orders
+              </Link>
+              <Link to="/profile" className="btn btn-outline-secondary m-2">
+                👤 My Profile
+              </Link>
+            </>
+          )}
+
+          {/* Show only for pharmacists */}
           {user?.role === "pharmacist" && (
             <Link to="/pharmacist" className="btn btn-outline-info m-2">
               Pharmacist Dashboard
@@ -201,6 +213,8 @@ function Home() {
           )}
         </div>
       </section>
+
+
     </div>
   );
 }

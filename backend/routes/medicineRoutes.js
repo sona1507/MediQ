@@ -8,7 +8,8 @@ import {
   searchMedicines,       // 🔎 Search medicines by name, category, or symptoms
   deleteAllMedicines,    // ❌ Delete all medicines
   deleteMedicineById,    // ❌ Delete a specific medicine by ID
-  getMedicinesByIds      // 🔍 Fetch multiple medicines by array of IDs
+  getMedicinesByIds,     // 🔍 Fetch multiple medicines by array of IDs
+  updateMedicineById     // ✏️ Update medicine details
 } from "../controllers/medicineController.js";
 
 const router = express.Router();
@@ -32,20 +33,25 @@ const upload = multer({ storage });
 // ===============================
 // POST Routes
 // ===============================
-router.post("/", upload.single("image"), addMedicine);  // ➕ Add new medicine with image
-router.post("/byIds", getMedicinesByIds);               // 🔍 Get medicines by array of IDs
+router.post("/", upload.single("image"), addMedicine);     // ➕ Add new medicine with image
+router.post("/byIds", getMedicinesByIds);                  // 🔍 Get medicines by array of IDs
 
 // ===============================
 // GET Routes
 // ===============================
-router.get("/", getMedicines);                          // 📦 Get all medicines (supports optional filters)
-router.get("/search", searchMedicines);                 // 🔎 Search medicines by query string
-router.get("/:id", getMedicineById);                    // 🔍 Get single medicine by ID
+router.get("/", getMedicines);                             // 📦 Get all medicines
+router.get("/search", searchMedicines);                    // 🔎 Search medicines
+router.get("/:id", getMedicineById);                       // 🔍 Get medicine by ID
+
+// ===============================
+// PATCH Routes
+// ===============================
+router.patch("/:id", upload.single("image"), updateMedicineById); // ✏️ Update medicine info
 
 // ===============================
 // DELETE Routes
 // ===============================
-router.delete("/", deleteAllMedicines);                 // ❌ Delete all medicines
-router.delete("/:id", deleteMedicineById);              // ❌ Delete medicine by ID
+router.delete("/", deleteAllMedicines);                    // ❌ Delete all medicines
+router.delete("/:id", deleteMedicineById);                 // ❌ Delete medicine by ID
 
 export default router;
