@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import fs from "fs";
 import path from "path";
+import compression from "compression";
 
 dotenv.config();
 const app = express();
@@ -12,6 +13,8 @@ const app = express();
 // Middleware
 // ===============================
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(compression());
 
 // ✅ CORS setup
 const allowedOrigins = [
@@ -69,6 +72,12 @@ app.get("/", (req, res) => {
   res.send("🩺 MediQ Backend is running...");
 });
 
+// ❓ Fallback for unknown routes (excluding static)
+app.use((req, res, next) => {
+  if (req.originalUrl.startsWith("/uploads")) return next();
+  res.status(404).json({ message: "Route not found" });
+});
+
 // ===============================
 // Global Error Handler
 // ===============================
@@ -104,6 +113,11 @@ mongoose.connect(MONGO_URI, {
 // Server Listener
 // ===============================
 const PORT = process.env.PORT || 5000;
+if (!PORT) {
+  console.error("❌ Missing PORT in .env");
+  process.exit(1);
+}
+
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });

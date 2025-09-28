@@ -28,30 +28,79 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const fileFilter = (req, file, cb) => {
+  const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(new Error("Unsupported file type"), false);
+  }
+};
+
+const upload = multer({ storage, fileFilter });
 
 // ===============================
 // POST Routes
 // ===============================
-router.post("/", upload.single("image"), addMedicine);     // ➕ Add new medicine with image
-router.post("/byIds", getMedicinesByIds);                  // 🔍 Get medicines by array of IDs
+
+/**
+ * @route   POST /api/medicines
+ * @desc    Add new medicine with image
+ */
+router.post("/", upload.single("image"), addMedicine);
+
+/**
+ * @route   POST /api/medicines/byIds
+ * @desc    Get medicines by array of IDs
+ */
+router.post("/byIds", getMedicinesByIds);
 
 // ===============================
 // GET Routes
 // ===============================
-router.get("/", getMedicines);                             // 📦 Get all medicines
-router.get("/search", searchMedicines);                    // 🔎 Search medicines
-router.get("/:id", getMedicineById);                       // 🔍 Get medicine by ID
+
+/**
+ * @route   GET /api/medicines
+ * @desc    Get all medicines
+ */
+router.get("/", getMedicines);
+
+/**
+ * @route   GET /api/medicines/search?q=
+ * @desc    Search medicines by name, category, or symptoms
+ */
+router.get("/search", searchMedicines);
+
+/**
+ * @route   GET /api/medicines/:id
+ * @desc    Get medicine by ID
+ */
+router.get("/:id", getMedicineById);
 
 // ===============================
 // PATCH Routes
 // ===============================
-router.patch("/:id", upload.single("image"), updateMedicineById); // ✏️ Update medicine info
+
+/**
+ * @route   PATCH /api/medicines/:id
+ * @desc    Update medicine info (with optional image)
+ */
+router.patch("/:id", upload.single("image"), updateMedicineById);
 
 // ===============================
 // DELETE Routes
 // ===============================
-router.delete("/", deleteAllMedicines);                    // ❌ Delete all medicines
-router.delete("/:id", deleteMedicineById);                 // ❌ Delete medicine by ID
+
+/**
+ * @route   DELETE /api/medicines
+ * @desc    Delete all medicines
+ */
+router.delete("/", deleteAllMedicines);
+
+/**
+ * @route   DELETE /api/medicines/:id
+ * @desc    Delete medicine by ID
+ */
+router.delete("/:id", deleteMedicineById);
 
 export default router;

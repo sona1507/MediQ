@@ -14,7 +14,7 @@ const router = express.Router();
  * @route   POST /api/prescriptions/upload
  * @desc    Upload prescription file
  */
-router.post("/upload", upload.single("file"), uploadPrescription); // ✅ fixed multer field name
+router.post("/upload", upload.single("file"), uploadPrescription);
 
 /**
  * @route   POST /api/prescriptions/:id/items
@@ -77,7 +77,7 @@ router.patch("/:id/reject", rejectPrescription);
 router.get("/:id/full", async (req, res) => {
   try {
     const pres = await Prescription.findById(req.params.id)
-      .populate("items.medicine approvedMedicines userId statusUpdatedBy", "userId name email");
+      .populate("items.medicine approvedMedicines userId statusUpdatedBy", "name email");
 
     if (!pres) {
       return res.status(404).json({ message: "Prescription not found" });
@@ -97,12 +97,28 @@ router.get("/:id/full", async (req, res) => {
 router.get("/approved/all", async (req, res) => {
   try {
     const prescriptions = await Prescription.find({ status: "approved" })
-      .populate("items.medicine approvedMedicines userId statusUpdatedBy", "userId name email");
+      .populate("items.medicine approvedMedicines userId statusUpdatedBy", "name email");
 
     res.json(prescriptions);
   } catch (error) {
     console.error("❌ Approved fetch error:", error);
     res.status(500).json({ message: "Failed to fetch approved prescriptions", error: error.message });
+  }
+});
+
+/**
+ * @route   GET /api/prescriptions/user/:id
+ * @desc    Get all prescriptions for a user with medicine details
+ */
+router.get("/user/:id", async (req, res) => {
+  try {
+    const prescriptions = await Prescription.find({ userId: req.params.id })
+      .populate("items.medicine approvedMedicines userId statusUpdatedBy", "name email");
+
+    res.json(prescriptions);
+  } catch (error) {
+    console.error("❌ User fetch error:", error);
+    res.status(500).json({ message: "Failed to fetch user prescriptions", error: error.message });
   }
 });
 
@@ -128,7 +144,7 @@ router.post("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const prescription = await Prescription.findById(req.params.id)
-      .populate("approvedMedicines items.medicine userId statusUpdatedBy", "userId name email");
+      .populate("approvedMedicines items.medicine userId statusUpdatedBy", "name email");
 
     if (!prescription) {
       return res.status(404).json({ message: "Prescription not found" });
@@ -148,7 +164,7 @@ router.get("/:id", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const prescriptions = await Prescription.find()
-      .populate("approvedMedicines items.medicine userId statusUpdatedBy", "userId name email");
+      .populate("approvedMedicines items.medicine userId statusUpdatedBy", "name email");
 
     res.json(prescriptions);
   } catch (error) {

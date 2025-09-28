@@ -6,13 +6,6 @@ const prescriptionSchema = new mongoose.Schema({
     ref: "User",
     required: true
   },
- 
-
-  medicineId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Medicine",
-    required: false // optional: used if prescription is tied to a specific medicine
-  },
 
   file: {
     type: String,
@@ -51,6 +44,7 @@ const prescriptionSchema = new mongoose.Schema({
     default: ""
   },
 
+  // ✅ Medicines attached during approval (for quick listing)
   approvedMedicines: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -58,6 +52,7 @@ const prescriptionSchema = new mongoose.Schema({
     }
   ],
 
+  // ✅ Detailed medicine structure for cart-ready display
   items: [
     {
       medicine: { type: mongoose.Schema.Types.ObjectId, ref: "Medicine" },

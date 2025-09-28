@@ -4,10 +4,14 @@ import { Navigate, useNavigate } from "react-router-dom";
 
 function PharmacistDashboard({ user }) {
   const [prescriptions, setPrescriptions] = useState([]);
+  const [medicines, setMedicines] = useState([]);
+  const [selectedMedicines, setSelectedMedicines] = useState({});
   const [loading, setLoading] = useState(true);
   const [unauthorized, setUnauthorized] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
   const [showMedicineForm, setShowMedicineForm] = useState(false);
+  const [preview, setPreview] = useState(null);
+
 
   const navigate = useNavigate();
 
@@ -30,7 +34,17 @@ function PharmacistDashboard({ user }) {
       }
     };
 
+    const fetchMedicines = async () => {
+      try {
+        const res = await axios.get("/api/medicines");
+        setMedicines(res.data);
+      } catch (err) {
+        console.error("Error fetching medicines:", err);
+      }
+    };
+
     fetchPrescriptions();
+    fetchMedicines();
   }, [user]);
 
   const handleAction = async (id, action) => {
@@ -38,12 +52,18 @@ function PharmacistDashboard({ user }) {
     try {
       await axios.patch(`/api/prescriptions/${id}/${action}`, {
         reviewedBy: user._id,
-        notes: `Marked as ${action} by ${user.name}`
+        notes: `Marked as ${action} by ${user.name}`,
+        medicineIds: selectedMedicines[id] || [],
       });
 
       const res = await axios.get("/api/prescriptions");
       const pending = res.data.filter(p => p.status === "pending");
       setPrescriptions(pending);
+      setSelectedMedicines(prev => {
+        const updated = { ...prev };
+        delete updated[id];
+        return updated;
+      });
     } catch (err) {
       console.error(`Error during ${action}:`, err);
       alert(err.response?.data?.message || `Failed to ${action} prescription.`);
@@ -99,11 +119,12 @@ function PharmacistDashboard({ user }) {
             📄 View Prescriptions
           </button>
           <button
-            className={`btn btn-outline-${showMedicineForm ? "primary" : "secondary"}`}
-            onClick={() => setShowMedicineForm(true)}
-          >
-            💊 Upload Medicine
-          </button>
+  className="btn btn-outline-primary"
+  onClick={() => setShowMedicineForm(true)}
+>
+  💊 Upload Medicine
+</button>
+
           <button
             className="btn btn-outline-info"
             onClick={() => navigate("/manage-medicines")}
@@ -116,41 +137,22 @@ function PharmacistDashboard({ user }) {
       {/* 💊 Medicine Upload Form */}
       {showMedicineForm ? (
         <form onSubmit={handleMedicineUpload} className="card p-4 shadow-sm">
-          <h4 className="mb-3 text-primary">Add New Medicine</h4>
-          <div className="row g-3">
-            <div className="col-md-6">
-              <input type="text" name="name" className="form-control" placeholder="Medicine Name" required />
-            </div>
-            <div className="col-md-6">
-              <input type="text" name="category" className="form-control" placeholder="Category" required />
-            </div>
-            <div className="col-md-4">
-              <input type="number" name="price" className="form-control" placeholder="Price" required />
-            </div>
-            <div className="col-md-4">
-              <input type="number" name="stock" className="form-control" placeholder="Stock" required />
-            </div>
-            <div className="col-md-4">
-              <input type="text" name="dosage" className="form-control" placeholder="Dosage" required />
-            </div>
-            <div className="col-md-12">
-              <input type="text" name="symptoms" className="form-control" placeholder="Symptoms (comma-separated)" required />
-            </div>
-            <div className="col-md-12">
-              <textarea name="description" className="form-control" placeholder="Description" rows="3" required />
-            </div>
-            <div className="col-md-6">
-              <select name="prescriptionRequired" className="form-select">
-                <option value="Required">Prescription Required</option>
-                <option value="Not Required">No Prescription</option>
-              </select>
-            </div>
-            <div className="col-md-6">
-              <input type="file" name="image" className="form-control" accept="image/*" required />
-            </div>
-          </div>
-          <button type="submit" className="btn btn-success mt-4 w-100">Upload Medicine</button>
-        </form>
+  <h5 className="mb-4 text-primary">➕ Add New Medicine</h5>
+  <input name="name" className="form-control mb-3" placeholder="Medicine Name *" required />
+  <input name="category" className="form-control mb-3" placeholder="Category" />
+  <input name="symptoms" className="form-control mb-3" placeholder="Symptoms (comma-separated)" />
+  <input name="price" type="number" className="form-control mb-3" placeholder="Price *" required />
+  <input name="stock" type="number" className="form-control mb-3" placeholder="Stock *" required />
+  <input name="dosage" className="form-control mb-3" placeholder="Dosage" />
+  <textarea name="description" className="form-control mb-3" placeholder="Description" />
+  <select name="prescriptionRequired" className="form-select mb-3">
+    <option value="Not Required">Not Required</option>
+    <option value="Required">Required</option>
+  </select>
+  <input type="file" name="image" accept="image/*" className="form-control mb-3" required />
+  <button className="btn btn-success w-100">Upload Medicine</button>
+</form>
+
       ) : (
         // 📄 Prescription Table
         <>
@@ -164,9 +166,8 @@ function PharmacistDashboard({ user }) {
                 <tr>
                   <th>User</th>
                   <th>File Name</th>
-                  <th>Original Name</th>
                   <th>Uploaded At</th>
-                  <th>Status</th>
+                  <th>Medicines to Attach</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -174,24 +175,27 @@ function PharmacistDashboard({ user }) {
                 {prescriptions.map(p => (
                   <tr key={p._id}>
                     <td>
-                      {typeof p.userId === "object" ? (
-                        <>
-                          <strong>{p.userId.name || "Unnamed"}</strong><br />
-                          <small className="text-muted">
-                            User ID: {p.userId.userId || p.userId._id}
-                          </small>
-                        </>
-                      ) : (
-                        <span className="text-muted">—</span>
-                      )}
+                      <strong>{p.userId?.name || "Unnamed"}</strong><br />
+                      <small className="text-muted">User ID: {p.userId?.userId || p.userId?._id}</small>
                     </td>
-                    <td>{p.fileName || p.file || "—"}</td>
-                    <td>{p.originalName || "—"}</td>
+                    <td>{p.originalName || p.fileName || "—"}</td>
                     <td>{new Date(p.createdAt).toLocaleString()}</td>
                     <td>
-                      <span className="badge bg-warning text-dark text-uppercase">
-                        {p.status}
-                      </span>
+                      <select
+                        multiple
+                        className="form-select"
+                        value={selectedMedicines[p._id] || []}
+                        onChange={(e) => {
+                          const selected = Array.from(e.target.selectedOptions).map(opt => opt.value);
+                          setSelectedMedicines(prev => ({ ...prev, [p._id]: selected }));
+                        }}
+                      >
+                        {medicines.map(m => (
+                          <option key={m._id} value={m._id}>
+                            {m.name} – ₹{m.price}
+                          </option>
+                        ))}
+                      </select>
                     </td>
                     <td>
                       <button

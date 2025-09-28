@@ -11,12 +11,13 @@ import Unauthorized from "./pages/Unauthorized";
 import Medicines from "./pages/Medicines";
 import BuyMedicine from "./pages/BuyMedicine";
 import MedicineManager from "./pages/MedicineManager";
-import UserProfile from "./components/UserProfile"; // ✅ Corrected import
+import UserProfile from "./components/UserProfile";
+import UploadMedicine from "./pages/UploadMedicine";
 import api from "./api/axios";
 import "./App.css";
 import "./index.css";
 
-// Personal Care Pages
+// Personal Care
 import PersonalCare from "./components/personalcare/PersonalCare";
 import SkinCare from "./components/personalcare/SkinCare";
 import HairCare from "./components/personalcare/HairCare";
@@ -24,7 +25,7 @@ import BabyMomCare from "./components/personalcare/BabyMomCare";
 import OralCare from "./components/personalcare/OralCare";
 import ElderlyCare from "./components/personalcare/ElderlyCare";
 
-// Health Condition Pages
+// Health Conditions
 import HealthCondition from "./components/healthcondition/HealthCondition";
 import BoneJointCare from "./components/healthcondition/BoneJointCare";
 import DigestiveCare from "./components/healthcondition/DigestiveCare";
@@ -59,6 +60,10 @@ export default function App() {
     window.addEventListener("storage", loadUser);
     return () => window.removeEventListener("storage", loadUser);
   }, []);
+
+  useEffect(() => {
+    console.log("👤 Logged in user:", user);
+  }, [user]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 100);
@@ -128,18 +133,28 @@ export default function App() {
       )}
 
       <Routes>
-        {/* Core Pages */}
-        <Route path="/" element={<Home scrolled={scrolled} user={user} />} /> {/* ✅ Pass user to Home */}
+        {/* Public Routes */}
+        <Route path="/" element={<Home scrolled={scrolled} user={user} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/upload" element={<UploadPrescription user={user} />} />
+        <Route path="/medicines" element={<Medicines user={user} />} />
+        <Route path="/buy/:id" element={<BuyMedicine user={user} />} />
+        <Route path="/profile" element={<UserProfile user={user} />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+
+        {/* Pharmacist Routes */}
         <Route
           path="/pharmacist"
           element={
             user?.role === "pharmacist" ? (
               <PharmacistDashboard user={user} />
-            ) : (
+            ) : user ? (
               <Navigate to="/unauthorized" />
+            ) : (
+              <div className="container text-center mt-5">
+                <h4 className="text-danger">🔒 Please log in to access the pharmacist dashboard</h4>
+              </div>
             )
           }
         />
@@ -148,20 +163,34 @@ export default function App() {
           element={
             user?.role === "pharmacist" ? (
               <MedicineManager user={user} />
-            ) : (
+            ) : user ? (
               <Navigate to="/unauthorized" />
+            ) : (
+              <div className="container text-center mt-5">
+                <h4 className="text-danger">🔒 Please log in to manage medicines</h4>
+              </div>
             )
           }
         />
-        <Route path="/profile" element={<UserProfile user={user} />} /> {/* ✅ Profile route */}
-        <Route path="/unauthorized" element={<Unauthorized />} />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route
+  path="/upload-medicine"
+  element={
+    user?.role === "pharmacist" ? (
+      <UploadMedicine user={user} />
+    ) : user ? (
+      <Navigate to="/unauthorized" />
+    ) : (
+      <div className="container text-center mt-5">
+        <h4 className="text-danger">🔒 Please log in to upload medicines</h4>
+      </div>
+    )
+  }
+/>
 
-        {/* Medicines Pages */}
-        <Route path="/medicines" element={<Medicines user={user} />} />
-        <Route path="/buy/:id" element={<BuyMedicine user={user} />} />
+        
 
-        {/* Personal Care Routes */}
+
+        {/* Personal Care */}
         <Route path="/personal-care" element={<PersonalCare />} />
         <Route path="/personal-care/skin" element={<SkinCare />} />
         <Route path="/personal-care/hair" element={<HairCare />} />
@@ -169,7 +198,7 @@ export default function App() {
         <Route path="/personal-care/oral" element={<OralCare />} />
         <Route path="/personal-care/elderly" element={<ElderlyCare />} />
 
-        {/* Health Condition Routes */}
+        {/* Health Conditions */}
         <Route path="/health-conditions" element={<HealthCondition />} />
         <Route path="/health-conditions/bone-joint" element={<BoneJointCare />} />
         <Route path="/health-conditions/digestive" element={<DigestiveCare />} />
@@ -183,6 +212,9 @@ export default function App() {
         <Route path="/health-conditions/respiratory" element={<RespiratoryCare />} />
         <Route path="/health-conditions/mental" element={<MentalWellness />} />
         <Route path="/health-conditions/derma" element={<DermaCare />} />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );
