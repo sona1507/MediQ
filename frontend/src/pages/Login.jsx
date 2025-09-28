@@ -6,34 +6,48 @@ function Login() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      setLoading(true);
+    setError("");
+    setLoading(true);
 
-      const res = await api.post("/auth/login", {
-        email: formData.email.trim().toLowerCase(),
-        password: formData.password.trim()
-      });
+    const email = formData.email.trim().toLowerCase();
+    const password = formData.password.trim();
+
+    // ✅ Basic email format check
+    if (!email.includes("@") || !email.includes(".")) {
+      setError("Please enter a valid email address.");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await api.post("/auth/login", { email, password });
 
       const user = res.data?.user;
+      const token = res.data?.token;
 
-      if (!user || !user.role) {
-        console.error("❌ Missing role in login response:", res.data);
-        alert("Login response missing role. Please contact support.");
+      if (!user || !user._id || !user.role) {
+        console.error("❌ Invalid login response:", res.data);
+        setError("Login failed: missing user ID or role.");
         return;
       }
 
+      // ✅ Store user and token
       localStorage.setItem("user", JSON.stringify(user));
-      window.dispatchEvent(new Event("storage")); // ✅ Trigger App.jsx to reload user
+      if (token) localStorage.setItem("token", token);
+
+      window.dispatchEvent(new Event("storage")); // Trigger App.jsx to reload user
 
       console.log("✅ Logged in user:", user);
       alert(res.data.message || "Login successful");
 
+      // ✅ Role-based routing
       switch (user.role) {
         case "pharmacist":
           navigate("/pharmacist");
@@ -41,12 +55,13 @@ function Login() {
         case "admin":
           navigate("/admin");
           break;
+        case "user":
         default:
           navigate("/");
       }
     } catch (err) {
       console.error("❌ Login error:", err);
-      alert(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || "Login failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -59,6 +74,11 @@ function Login() {
     >
       <div className="card shadow p-4 w-100" style={{ maxWidth: "400px" }}>
         <h2 className="text-center mb-4">Login</h2>
+
+        {error && (
+          <div className="alert alert-danger text-center py-2">{error}</div>
+        )}
+
         <form onSubmit={handleSubmit} autoComplete="on">
           <input
             type="email"
@@ -84,6 +104,7 @@ function Login() {
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
+
         <p className="text-center">
           Don't have an account? <Link to="/register">Register here</Link>
         </p>

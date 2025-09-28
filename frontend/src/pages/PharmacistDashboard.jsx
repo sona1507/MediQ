@@ -10,23 +10,20 @@ function PharmacistDashboard({ user }) {
   const [unauthorized, setUnauthorized] = useState(false);
   const [actionLoading, setActionLoading] = useState(null);
   const [showMedicineForm, setShowMedicineForm] = useState(false);
-  const [preview, setPreview] = useState(null);
-
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPrescriptions = async () => {
-      if (!user || user.role !== "pharmacist") {
-        setUnauthorized(true);
-        setLoading(false);
-        return;
-      }
+    if (!user || user.role !== "pharmacist") {
+      setUnauthorized(true);
+      setLoading(false);
+      return;
+    }
 
+    const fetchPrescriptions = async () => {
       try {
         const res = await axios.get("/api/prescriptions");
-        const pending = res.data.filter(p => p.status === "pending");
-        setPrescriptions(pending);
+        setPrescriptions(res.data || []);
       } catch (err) {
         console.error("Error fetching prescriptions:", err);
       } finally {
@@ -37,7 +34,7 @@ function PharmacistDashboard({ user }) {
     const fetchMedicines = async () => {
       try {
         const res = await axios.get("/api/medicines");
-        setMedicines(res.data);
+        setMedicines(res.data || []);
       } catch (err) {
         console.error("Error fetching medicines:", err);
       }
@@ -57,8 +54,7 @@ function PharmacistDashboard({ user }) {
       });
 
       const res = await axios.get("/api/prescriptions");
-      const pending = res.data.filter(p => p.status === "pending");
-      setPrescriptions(pending);
+      setPrescriptions(res.data || []);
       setSelectedMedicines(prev => {
         const updated = { ...prev };
         delete updated[id];
@@ -102,85 +98,91 @@ function PharmacistDashboard({ user }) {
     }
   };
 
-  if (unauthorized) {
-    return <Navigate to="/unauthorized" />;
-  }
+  if (unauthorized) return <Navigate to="/unauthorized" />;
 
   return (
-    <div className="container my-5">
-      {/* 🧭 Navbar */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h2 className="text-success">🧑‍⚕️ Pharmacist Dashboard</h2>
-        <div className="d-flex gap-2">
-          <button
-            className={`btn btn-outline-${showMedicineForm ? "secondary" : "primary"}`}
-            onClick={() => setShowMedicineForm(false)}
-          >
-            📄 View Prescriptions
-          </button>
-          <button
-  className="btn btn-outline-primary"
-  onClick={() => setShowMedicineForm(true)}
->
-  💊 Upload Medicine
-</button>
-
-          <button
-            className="btn btn-outline-info"
-            onClick={() => navigate("/manage-medicines")}
-          >
-            🧾 Manage Medicines
-          </button>
-        </div>
+  <div className="container my-5">
+    {/* 🧭 Navbar */}
+    <div className="d-flex justify-content-between align-items-center mb-4">
+      <h2 className="text-success">🧑‍⚕️ Pharmacist Dashboard</h2>
+      <div className="d-flex gap-2">
+        <button
+          className={`btn btn-outline-${showMedicineForm ? "secondary" : "primary"}`}
+          onClick={() => setShowMedicineForm(false)}
+        >
+          📄 View Prescriptions
+        </button>
+        <button
+          className="btn btn-outline-primary"
+          onClick={() => setShowMedicineForm(true)}
+        >
+          💊 Upload Medicine
+        </button>
+        <button
+          className="btn btn-outline-info"
+          onClick={() => navigate("/manage-medicines")}
+        >
+          🧾 Manage Medicines
+        </button>
       </div>
+    </div>
 
-      {/* 💊 Medicine Upload Form */}
-      {showMedicineForm ? (
-        <form onSubmit={handleMedicineUpload} className="card p-4 shadow-sm">
-  <h5 className="mb-4 text-primary">➕ Add New Medicine</h5>
-  <input name="name" className="form-control mb-3" placeholder="Medicine Name *" required />
-  <input name="category" className="form-control mb-3" placeholder="Category" />
-  <input name="symptoms" className="form-control mb-3" placeholder="Symptoms (comma-separated)" />
-  <input name="price" type="number" className="form-control mb-3" placeholder="Price *" required />
-  <input name="stock" type="number" className="form-control mb-3" placeholder="Stock *" required />
-  <input name="dosage" className="form-control mb-3" placeholder="Dosage" />
-  <textarea name="description" className="form-control mb-3" placeholder="Description" />
-  <select name="prescriptionRequired" className="form-select mb-3">
-    <option value="Not Required">Not Required</option>
-    <option value="Required">Required</option>
-  </select>
-  <input type="file" name="image" accept="image/*" className="form-control mb-3" required />
-  <button className="btn btn-success w-100">Upload Medicine</button>
-</form>
-
-      ) : (
-        // 📄 Prescription Table
-        <>
-          {loading ? (
-            <p>Loading prescriptions...</p>
-          ) : prescriptions.length === 0 ? (
-            <div className="alert alert-info">No pending prescriptions.</div>
-          ) : (
-            <table className="table table-bordered table-hover">
-              <thead className="table-light">
-                <tr>
-                  <th>User</th>
-                  <th>File Name</th>
-                  <th>Uploaded At</th>
-                  <th>Medicines to Attach</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {prescriptions.map(p => (
-                  <tr key={p._id}>
-                    <td>
-                      <strong>{p.userId?.name || "Unnamed"}</strong><br />
-                      <small className="text-muted">User ID: {p.userId?.userId || p.userId?._id}</small>
-                    </td>
-                    <td>{p.originalName || p.fileName || "—"}</td>
-                    <td>{new Date(p.createdAt).toLocaleString()}</td>
-                    <td>
+    {/* 💊 Medicine Upload Form */}
+    {showMedicineForm ? (
+      <form onSubmit={handleMedicineUpload} className="card p-4 shadow-sm">
+        <h5 className="mb-4 text-primary">➕ Add New Medicine</h5>
+        <input name="name" className="form-control mb-3" placeholder="Medicine Name *" required />
+        <input name="category" className="form-control mb-3" placeholder="Category" />
+        <input name="symptoms" className="form-control mb-3" placeholder="Symptoms (comma-separated)" />
+        <input name="price" type="number" className="form-control mb-3" placeholder="Price *" required />
+        <input name="stock" type="number" className="form-control mb-3" placeholder="Stock *" required />
+        <input name="dosage" className="form-control mb-3" placeholder="Dosage" />
+        <textarea name="description" className="form-control mb-3" placeholder="Description" />
+        <select name="prescriptionRequired" className="form-select mb-3">
+          <option value="Not Required">Not Required</option>
+          <option value="Required">Required</option>
+        </select>
+        <input type="file" name="image" accept="image/*" className="form-control mb-3" required />
+        <button className="btn btn-success w-100">Upload Medicine</button>
+      </form>
+    ) : (
+      <>
+        {loading ? (
+          <p>Loading prescriptions...</p>
+        ) : prescriptions.length === 0 ? (
+          <div className="alert alert-info">No prescriptions found.</div>
+        ) : (
+          <table className="table table-bordered table-hover">
+            <thead className="table-light">
+              <tr>
+                <th>User</th>
+                <th>File Name</th>
+                <th>Uploaded At</th>
+                <th>Status</th>
+                <th>Medicines to Attach</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {prescriptions.map(p => (
+                <tr key={p._id}>
+                  <td>
+                    <strong>{p.userId?.name || "Unnamed"}</strong><br />
+                    <small className="text-muted">User ID: {p.userId?.userId || p.userId?._id}</small>
+                  </td>
+                  <td>{p.originalName || p.fileName || "—"}</td>
+                  <td>{new Date(p.createdAt).toLocaleString()}</td>
+                  <td>
+                    <span className={`badge ${
+                      p.status === "approved" ? "bg-success" :
+                      p.status === "rejected" ? "bg-danger" :
+                      "bg-warning text-dark"
+                    }`}>
+                      {p.status?.toUpperCase()}
+                    </span>
+                  </td>
+                  <td>
+                    {p.status === "pending" ? (
                       <select
                         multiple
                         className="form-select"
@@ -196,32 +198,40 @@ function PharmacistDashboard({ user }) {
                           </option>
                         ))}
                       </select>
-                    </td>
-                    <td>
-                      <button
-                        className="btn btn-success btn-sm me-2"
-                        disabled={actionLoading === p._id}
-                        onClick={() => handleAction(p._id, "approve")}
-                      >
-                        {actionLoading === p._id ? "Approving..." : "✅ Approve"}
-                      </button>
-                      <button
-                        className="btn btn-danger btn-sm"
-                        disabled={actionLoading === p._id}
-                        onClick={() => handleAction(p._id, "reject")}
-                      >
-                        {actionLoading === p._id ? "Rejecting..." : "❌ Reject"}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </>
-      )}
-    </div>
-  );
+                    ) : (
+                      <span className="text-muted">—</span>
+                    )}
+                  </td>
+                  <td>
+                    {p.status === "pending" ? (
+                      <>
+                        <button
+                          className="btn btn-success btn-sm me-2"
+                          disabled={actionLoading === p._id}
+                          onClick={() => handleAction(p._id, "approve")}
+                        >
+                          {actionLoading === p._id ? "Approving..." : "✅ Approve"}
+                        </button>
+                        <button
+                          className="btn btn-danger btn-sm"
+                          disabled={actionLoading === p._id}
+                          onClick={() => handleAction(p._id, "reject")}
+                        >
+                          {actionLoading === p._id ? "Rejecting..." : "❌ Reject"}
+                        </button>
+                      </>
+                    ) : (
+                      <span className="text-muted">Reviewed</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </>
+    )}
+  </div>
+);
 }
-
 export default PharmacistDashboard;

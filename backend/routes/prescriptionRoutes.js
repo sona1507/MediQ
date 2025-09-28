@@ -1,4 +1,5 @@
 import express from "express";
+import mongoose from "mongoose";
 import Prescription from "../models/prescription.js";
 import Medicine from "../models/Medicine.js";
 import upload from "../prescription/upload.js";
@@ -18,7 +19,7 @@ router.post("/upload", upload.single("file"), uploadPrescription);
 
 /**
  * @route   POST /api/prescriptions/:id/items
- * @desc    Attach medicines to a prescription
+ * @desc    Attach detailed medicine items to a prescription
  */
 router.post("/:id/items", async (req, res) => {
   try {
@@ -72,12 +73,12 @@ router.patch("/:id/reject", rejectPrescription);
 
 /**
  * @route   GET /api/prescriptions/:id/full
- * @desc    Get prescription with medicine details
+ * @desc    Get full prescription with medicine details
  */
 router.get("/:id/full", async (req, res) => {
   try {
     const pres = await Prescription.findById(req.params.id)
-      .populate("items.medicine approvedMedicines userId statusUpdatedBy", "name email");
+      .populate("items.medicine medicineIds approvedMedicines userId statusUpdatedBy", "name email");
 
     if (!pres) {
       return res.status(404).json({ message: "Prescription not found" });
@@ -97,7 +98,7 @@ router.get("/:id/full", async (req, res) => {
 router.get("/approved/all", async (req, res) => {
   try {
     const prescriptions = await Prescription.find({ status: "approved" })
-      .populate("items.medicine approvedMedicines userId statusUpdatedBy", "name email");
+      .populate("items.medicine medicineIds approvedMedicines userId statusUpdatedBy", "name email");
 
     res.json(prescriptions);
   } catch (error) {
@@ -108,12 +109,17 @@ router.get("/approved/all", async (req, res) => {
 
 /**
  * @route   GET /api/prescriptions/user/:id
- * @desc    Get all prescriptions for a user with medicine details
+ * @desc    Get all prescriptions for a user
  */
 router.get("/user/:id", async (req, res) => {
   try {
-    const prescriptions = await Prescription.find({ userId: req.params.id })
-      .populate("items.medicine approvedMedicines userId statusUpdatedBy", "name email");
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid user ID" });
+    }
+
+    const prescriptions = await Prescription.find({ userId: id })
+      .populate("items.medicine medicineIds approvedMedicines userId statusUpdatedBy", "name email");
 
     res.json(prescriptions);
   } catch (error) {
@@ -144,7 +150,7 @@ router.post("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const prescription = await Prescription.findById(req.params.id)
-      .populate("approvedMedicines items.medicine userId statusUpdatedBy", "name email");
+      .populate("items.medicine medicineIds approvedMedicines userId statusUpdatedBy", "name email");
 
     if (!prescription) {
       return res.status(404).json({ message: "Prescription not found" });
@@ -164,7 +170,7 @@ router.get("/:id", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const prescriptions = await Prescription.find()
-      .populate("approvedMedicines items.medicine userId statusUpdatedBy", "name email");
+      .populate("items.medicine medicineIds approvedMedicines userId statusUpdatedBy", "name email");
 
     res.json(prescriptions);
   } catch (error) {

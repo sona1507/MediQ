@@ -35,7 +35,8 @@ export const getPrescriptions = async (req, res) => {
   try {
     const prescriptions = await Prescription.find()
       .populate("userId", "userId name email")
-      .populate("statusUpdatedBy", "userId name email"); // ✅ pharmacist info
+      .populate("statusUpdatedBy", "userId name email")
+      .populate("medicineIds", "name price description"); // ✅ show medicine details
     res.json(prescriptions);
   } catch (error) {
     console.error("❌ Fetch error:", error);
@@ -43,11 +44,11 @@ export const getPrescriptions = async (req, res) => {
   }
 };
 
-// ✅ Approve prescription
+// ✅ Approve prescription with medicines
 export const approvePrescription = async (req, res) => {
   try {
     const { id } = req.params;
-    const { reviewedBy, notes } = req.body;
+    const { reviewedBy, notes, medicineIds } = req.body;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid prescription ID" });
@@ -57,18 +58,24 @@ export const approvePrescription = async (req, res) => {
       return res.status(400).json({ message: "Missing or invalid reviewer ID" });
     }
 
+    const validMedicineIds = Array.isArray(medicineIds)
+      ? medicineIds.filter(m => mongoose.Types.ObjectId.isValid(m))
+      : [];
+
     const updated = await Prescription.findByIdAndUpdate(
       id,
       {
         status: "approved",
         statusUpdatedBy: reviewedBy,
         notes: notes || "Approved without notes",
-        reviewedAt: new Date()
+        reviewedAt: new Date(),
+        medicineIds: validMedicineIds
       },
       { new: true }
     )
-    .populate("userId", "userId name email")
-    .populate("statusUpdatedBy", "userId name email");
+      .populate("userId", "userId name email")
+      .populate("statusUpdatedBy", "userId name email")
+      .populate("medicineIds", "name price description");
 
     if (!updated) {
       return res.status(404).json({ message: "Prescription not found" });
@@ -101,12 +108,13 @@ export const rejectPrescription = async (req, res) => {
         status: "rejected",
         statusUpdatedBy: reviewedBy,
         notes: notes || "Rejected without notes",
-        reviewedAt: new Date()
+        reviewedAt: new Date(),
+        medicineIds: [] // ✅ clear medicines on rejection
       },
       { new: true }
     )
-    .populate("userId", "userId name email")
-    .populate("statusUpdatedBy", "userId name email");
+      .populate("userId", "userId name email")
+      .populate("statusUpdatedBy", "userId name email");
 
     if (!updated) {
       return res.status(404).json({ message: "Prescription not found" });
