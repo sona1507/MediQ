@@ -197,5 +197,23 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ message: "Failed to delete prescription", error: error.message });
   }
 });
+// PATCH /prescriptions/:id/medicines
+router.patch("/:id/medicines", async (req, res) => {
+  const { items } = req.body; // array of { medicine, dosage, instructions }
+
+  try {
+    const updated = await Prescription.findByIdAndUpdate(
+      req.params.id,
+      { $set: { items } },
+      { new: true }
+    ).populate("items.medicine"); // ✅ populate for frontend display
+
+    res.json(updated);
+  } catch (err) {
+    console.error("Failed to update prescription medicines:", err);
+    res.status(500).json({ error: "Failed to update medicines" });
+  }
+});
+
 
 export default router;

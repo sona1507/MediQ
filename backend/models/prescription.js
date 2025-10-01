@@ -65,14 +65,14 @@ const prescriptionSchema = new mongoose.Schema({
   ],
 
   // ✅ Detailed medicine structure for cart-ready display
-  items: [
-    {
-      medicine: { type: mongoose.Schema.Types.ObjectId, ref: "Medicine" },
-      quantity: { type: Number, required: true },
-      dosage: { type: String, default: "" },
-      instructions: { type: String, default: "" }
-    }
-  ],
+  items: [{
+  medicine: { type: mongoose.Schema.Types.ObjectId, ref: "Medicine" },
+  description: String,
+  dosage: String,
+  instructions: String
+  
+}]
+,
 
   // ✅ Snapshot of user at time of upload
   userSnapshot: {
