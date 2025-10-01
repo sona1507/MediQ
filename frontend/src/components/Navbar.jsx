@@ -12,7 +12,6 @@ function Navbar({ scrolled }) {
 
   const user = JSON.parse(localStorage.getItem("user"));
 
-  // Close panel on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (panelRef.current && !panelRef.current.contains(e.target)) {
@@ -23,7 +22,6 @@ function Navbar({ scrolled }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showPanel]);
 
-  // Debounced search
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
       if (!query.trim()) {
@@ -61,11 +59,19 @@ function Navbar({ scrolled }) {
         {/* Logo */}
         <div className="d-flex align-items-center flex-grow-1 position-relative">
           <Link className="navbar-brand d-flex align-items-center me-3" to="/">
-            <img src="/images/logo.png" alt="Logo" width="45" height="45" className="me-2" />
-            <span className="fw-bold text-primary">Medi<span className="text-dark">Q</span></span>
+            <img
+              src="/images/logo.png"
+              alt="Logo"
+              width="45"
+              height="45"
+              className="me-2"
+            />
+            <span className="fw-bold text-primary">
+              Medi<span className="text-dark">Q</span>
+            </span>
           </Link>
 
-          {/* Search Bar */}
+          {/* Search Bar (only when scrolled) */}
           {scrolled && (
             <div className="position-relative" style={{ width: "100%" }}>
               <input
@@ -82,14 +88,39 @@ function Navbar({ scrolled }) {
                 }}
               />
 
-              {/* Suggestions */}
+              {/* Suggestions Dropdown */}
               {suggestions.length > 0 && (
-                <ul className="suggestion-list">
+                <ul
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    background: "#fff",
+                    border: "1px solid #ddd",
+                    borderRadius: "6px",
+                    boxShadow: "0 4px 8px rgba(0,0,0,0.05)",
+                    listStyle: "none",
+                    margin: 0,
+                    padding: 0,
+                    zIndex: 1050,
+                    maxHeight: "200px",
+                    overflowY: "auto",
+                  }}
+                >
                   {suggestions.map((med) => (
                     <li
                       key={med._id}
                       onClick={() => handleSelect(med)}
-                      className="suggestion-item"
+                      style={{
+                        padding: "8px 12px",
+                        cursor: "pointer",
+                        fontSize: "14px",
+                        color: "#007bff",
+                        borderBottom: "1px solid #eee",
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f1f9ff")}
+                      onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#fff")}
                     >
                       {med.name}
                     </li>
@@ -97,14 +128,40 @@ function Navbar({ scrolled }) {
                 </ul>
               )}
 
-              {/* No matches */}
+              {/* No suggestions fallback */}
               {query.trim() && suggestions.length === 0 && (
-                <div className="suggestion-empty">No matches found.</div>
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "100%",
+                    left: 0,
+                    right: 0,
+                    background: "#fff",
+                    border: "1px solid #ddd",
+                    borderRadius: "6px",
+                    padding: "10px",
+                    fontSize: "14px",
+                    color: "#999",
+                    zIndex: 1050,
+                  }}
+                >
+                  No matches found.
+                </div>
               )}
 
-              {/* Selected Medicine */}
+              {/* Selected Medicine Details */}
               {selectedMedicine && (
-                <div className="selected-medicine">
+                <div
+                  style={{
+                    marginTop: "8px",
+                    padding: "10px",
+                    background: "#f9f9f9",
+                    border: "1px solid #ddd",
+                    borderRadius: "6px",
+                    fontSize: "13px",
+                    color: "#333",
+                  }}
+                >
                   <div><strong>Name:</strong> {selectedMedicine.name}</div>
                   <div><strong>Category:</strong> {selectedMedicine.category}</div>
                   <div><strong>Symptoms:</strong> {selectedMedicine.symptoms.join(", ")}</div>
@@ -116,14 +173,23 @@ function Navbar({ scrolled }) {
           )}
         </div>
 
-        {/* Navigation */}
+        {/* Navigation Links */}
         <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul className="navbar-nav align-items-center">
-            <li className="nav-item"><Link className="nav-link" to="/">🏠 Home</Link></li>
-            <li className="nav-item"><Link className="nav-link" to="/medicines">💊 Medicines</Link></li>
-            <li className="nav-item"><Link className="nav-link" to="/upload">📤 Upload</Link></li>
-            <li className="nav-item"><Link className="nav-link" to="/cart">🛒 Cart</Link></li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/">🏠 Home</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/medicines">💊 Medicines</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/upload">📤 Upload</Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/cart">🛒 Cart</Link>
+            </li>
 
+            {/* 🔐 Auth Section */}
             {!user ? (
               <li className="nav-item">
                 <Link className="btn btn-outline-primary ms-lg-3 mt-2 mt-lg-0 px-3" to="/login">
@@ -136,7 +202,7 @@ function Navbar({ scrolled }) {
                   className="btn btn-outline-secondary ms-lg-3 mt-2 mt-lg-0 px-3"
                   onClick={() => setShowPanel(!showPanel)}
                 >
-                  👤 {user.name}
+                  👤 {user.name || "User"}
                 </button>
               </li>
             )}
@@ -144,7 +210,7 @@ function Navbar({ scrolled }) {
         </div>
       </div>
 
-      {/* Floating Panel */}
+      {/* ✅ Floating User Panel */}
       {showPanel && (
         <div ref={panelRef}>
           <UserPanel user={user} onClose={() => setShowPanel(false)} />

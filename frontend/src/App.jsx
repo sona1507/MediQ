@@ -210,36 +210,36 @@ export default function App() {
     {selectedMedicineId && <Navigate to={`/buy/${selectedMedicineId}`} replace />}
     
     {/* ✅ Search Suggestions */}
-    {suggestions.length > 0 && (
-      <div className="container mt-5">
-        <div className="p-4 bg-white rounded shadow-sm" style={{ marginTop: "100px" }}>
-          <h5 className="mb-3 text-primary">
-            Showing results for: <span className="text-dark">{query}</span>
-          </h5>
-          <div className="row">
-            {suggestions.map((med) => (
-              <div key={med._id} className="col-md-4 mb-4">
-                <div className="p-3 border rounded bg-light h-100 d-flex flex-column justify-content-between">
-                  <div>
-                    <h6 className="text-primary">{med.name}</h6>
-                    <p className="mb-1"><strong>Category:</strong> {med.category}</p>
-                    <p className="mb-1"><strong>Symptoms:</strong> {med.symptoms?.join(", ")}</p>
-                    <p className="mb-1 text-muted" style={{ fontSize: "14px" }}>{med.description}</p>
-                    <p className="mt-2"><strong>Price:</strong> ₹{med.price}</p>
-                  </div>
-                  <button
-                    className="btn btn-outline-primary mt-3"
-                    onClick={() => setSelectedMedicineId(med._id)}
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
-            ))}
+   {suggestions.length > 0 && (
+  <div className="container search-suggestions-container">
+    <h5 className="mb-3 text-primary">
+      Showing results for: <span className="text-dark">{query}</span>
+    </h5>
+    <div className="row">
+      {suggestions.map((med) => (
+        <div key={med._id} className="col-md-4 mb-4">
+          <div className="medicine-card h-100 d-flex flex-column justify-content-between">
+            <div>
+              <h6>{med.name}</h6>
+              <p><strong>Category:</strong> {med.category}</p>
+              <p><strong>Symptoms:</strong> {med.symptoms?.join(", ")}</p>
+              <p className="text-muted">{med.description}</p>
+              <p><strong>Price:</strong> ₹{med.price}</p>
+            </div>
+            <button
+              className="btn btn-outline-primary mt-3"
+              onClick={() => setSelectedMedicineId(med._id)}
+            >
+              View
+            </button>
           </div>
         </div>
-      </div>
-    )}
+      ))}
+    </div>
+  </div>
+)}
+
+
   </Router>
 );
 }
