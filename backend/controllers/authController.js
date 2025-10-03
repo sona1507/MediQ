@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
 // @desc   Register a new user
@@ -43,10 +44,12 @@ export const registerUser = async (req, res) => {
       email: cleanEmail,
       mobile: cleanMobile,
       password: hashedPassword,
-      role: cleanRole
+      role: cleanRole,
     });
 
     await user.save();
+
+    console.log(`✅ Registered user: ${userId}`);
 
     // ✅ Respond with user data (excluding password)
     res.status(201).json({
@@ -56,9 +59,9 @@ export const registerUser = async (req, res) => {
         name: user.name,
         email: user.email,
         mobile: user.mobile,
-        role: user.role
+        role: user.role,
       },
-      message: "Registration successful"
+      message: "Registration successful",
     });
   } catch (error) {
     console.error("❌ Register error:", error);
@@ -96,17 +99,27 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // ✅ Respond with user data
+    // ✅ Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    console.log(`✅ Logged in user: ${user.userId}`);
+
+    // ✅ Respond with full user object and token
     res.status(200).json({
+      message: "Login successful",
       user: {
         _id: user._id,
         userId: user.userId,
         name: user.name,
         email: user.email,
         mobile: user.mobile,
-        role: user.role
+        role: user.role,
       },
-      message: "Login successful"
+      token,
     });
   } catch (error) {
     console.error("❌ Login error:", error);

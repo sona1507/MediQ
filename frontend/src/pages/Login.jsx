@@ -19,30 +19,31 @@ function Login() {
     const email = formData.email.trim().toLowerCase();
     const password = formData.password.trim();
 
-    // ✅ Basic email format check
-    if (!email.includes("@") || !email.includes(".")) {
-      setError("Please enter a valid email address.");
-      setLoading(false);
-      return;
-    }
-
     try {
       const res = await api.post("/auth/login", { email, password });
 
       const user = res.data?.user;
       const token = res.data?.token;
 
-      if (!user || !user._id || !user.role) {
+      // ✅ Validate user and token before storing
+      if (
+        !user ||
+        typeof user !== "object" ||
+        !user._id ||
+        typeof user.role !== "string" ||
+        typeof token !== "string" ||
+        token.length < 10
+      ) {
         console.error("❌ Invalid login response:", res.data);
-        setError("Login failed: missing user ID or role.");
+        setError("Login failed: invalid user or token.");
+        setLoading(false);
         return;
       }
 
-      // ✅ Store user and token
+      // ✅ Store session
       localStorage.setItem("user", JSON.stringify(user));
-      if (token) localStorage.setItem("token", token);
-
-      window.dispatchEvent(new Event("storage")); // Trigger App.jsx to reload user
+      localStorage.setItem("token", token);
+      window.dispatchEvent(new Event("storage"));
 
       console.log("✅ Logged in user:", user);
       alert(res.data.message || "Login successful");

@@ -47,34 +47,66 @@ import Cart from './pages/Cart';
 
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState(undefined); // ✅ Start with undefined
+  const [user, setUser] = useState(undefined);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [selectedMedicineId, setSelectedMedicineId] = useState(null);
 
   // ✅ Load user from localStorage and validate
- useEffect(() => {
-  const storedUser = localStorage.getItem("user");
-  try {
-    const parsed = storedUser ? JSON.parse(storedUser) : null;
-    if (
-      parsed &&
-      typeof parsed === "object" &&
-      (parsed.userId || parsed._id) &&
-      parsed.role
-    ) {
-      setUser(parsed);
-      console.log("👤 Logged in user:", parsed);
-    } else {
-      console.warn("🚫 Invalid user object in localStorage");
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
+
+    try {
+      const parsed = storedUser ? JSON.parse(storedUser) : null;
+      if (
+        parsed &&
+        typeof parsed === "object" &&
+        parsed._id &&
+        typeof parsed.role === "string" &&
+        typeof storedToken === "string" &&
+        storedToken.length > 10
+      ) {
+        setUser(parsed);
+        console.log("👤 Logged in user:", parsed);
+      } else {
+        console.warn("🚫 Invalid user object in localStorage");
+        setUser(null);
+      }
+    } catch (err) {
+      console.error("❌ Error parsing user:", err.message);
       setUser(null);
     }
-  } catch (err) {
-    console.error("❌ Error parsing user:", err);
-    setUser(null);
-  }
-}, []);
+  }, []);
 
+  // ✅ Multi-tab session sync
+  useEffect(() => {
+    const syncSession = () => {
+      const storedUser = localStorage.getItem("user");
+      const storedToken = localStorage.getItem("token");
+
+      try {
+        const parsed = storedUser ? JSON.parse(storedUser) : null;
+        if (
+          parsed &&
+          typeof parsed === "object" &&
+          parsed._id &&
+          typeof parsed.role === "string" &&
+          typeof storedToken === "string" &&
+          storedToken.length > 10
+        ) {
+          setUser(parsed);
+        } else {
+          setUser(null);
+        }
+      } catch {
+        setUser(null);
+      }
+    };
+
+    window.addEventListener("storage", syncSession);
+    return () => window.removeEventListener("storage", syncSession);
+  }, []);
 
   // ✅ Scroll detection
   useEffect(() => {
@@ -92,7 +124,6 @@ export default function App() {
         document.documentElement.style.setProperty("--main-navbar-height", `${height}px`);
       }
     };
-
     const timeout = setTimeout(syncNavbarHeight, 100);
     return () => clearTimeout(timeout);
   }, []);
@@ -108,7 +139,6 @@ export default function App() {
         console.error("❌ Search error:", err.message);
       }
     };
-
     const debounce = setTimeout(fetchSuggestions, 300);
     return () => clearTimeout(debounce);
   }, [query]);
@@ -127,92 +157,91 @@ export default function App() {
     );
   }
 
-  
-return (
-  <Router>
-    <Navbar scrolled={scrolled} query={query} setQuery={setQuery} />
-    <CategoryNavbar scrolled={scrolled} />
+  return (
+    <Router>
+      <Navbar scrolled={scrolled} query={query} setQuery={setQuery} />
+      <CategoryNavbar scrolled={scrolled} />
 
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<Home scrolled={scrolled} user={user} />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/upload" element={<UploadPrescription user={user} />} />
-      <Route path="/medicines" element={<Medicines user={user} />} />
-      <Route path="/buy/:id" element={<BuyMedicine user={user} />} />
-      <Route path="/profile" element={<UserProfile user={user} />} />
-      <Route path="/checkout" element={<Checkout user={user} />} />
-      <Route path="/unauthorized" element={<Unauthorized />} />
-      <Route path="/prescriptions" element={<PrescriptionStatus user={user} />} />
-      <Route path="/cart" element={<Cart user={user} />} />
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Home scrolled={scrolled} user={user} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/upload" element={<UploadPrescription user={user} />} />
+        <Route path="/medicines" element={<Medicines user={user} />} />
+        <Route path="/buy/:id" element={<BuyMedicine user={user} />} />
+        <Route path="/profile" element={<UserProfile user={user} />} />
+        <Route path="/checkout" element={<Checkout user={user} />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/prescriptions" element={<PrescriptionStatus user={user} />} />
+        <Route path="/cart" element={<Cart user={user} />} />
 
-      {/* Pharmacist Routes */}
-      <Route
-        path="/pharmacist"
-        element={
-          user?.role === "pharmacist" ? (
-            <PharmacistDashboard user={user} />
-          ) : user ? (
-            <Navigate to="/unauthorized" />
-          ) : (
-            <div className="container text-center mt-5">
-              <h4 className="text-danger">🔒 Please log in to access the pharmacist dashboard</h4>
-            </div>
-          )
-        }
-      />
-      <Route
-        path="/manage-medicines"
-        element={
-          user?.role === "pharmacist" ? (
-            <MedicineManager user={user} />
-          ) : user ? (
-            <Navigate to="/unauthorized" />
-          ) : (
-            <div className="container text-center mt-5">
-              <h4 className="text-danger">🔒 Please log in to manage medicines</h4>
-            </div>
-          )
-        }
-      />
-      <Route
-        path="/upload-medicine"
-        element={
-          user?.role === "pharmacist" ? (
-            <UploadMedicine user={user} />
-          ) : user ? (
-            <Navigate to="/unauthorized" />
-          ) : (
-            <div className="container text-center mt-5">
-              <h4 className="text-danger">🔒 Please log in to upload medicines</h4>
-            </div>
-          )
-        }
-      />
+        {/* Pharmacist Routes */}
+        <Route
+          path="/pharmacist"
+          element={
+            user?.role === "pharmacist" ? (
+              <PharmacistDashboard user={user} />
+            ) : user ? (
+              <Navigate to="/unauthorized" />
+            ) : (
+              <div className="container text-center mt-5">
+                <h4 className="text-danger">🔒 Please log in to access the pharmacist dashboard</h4>
+              </div>
+            )
+          }
+        />
+        <Route
+          path="/manage-medicines"
+          element={
+            user?.role === "pharmacist" ? (
+              <MedicineManager user={user} />
+            ) : user ? (
+              <Navigate to="/unauthorized" />
+            ) : (
+              <div className="container text-center mt-5">
+                <h4 className="text-danger">🔒 Please log in to manage medicines</h4>
+              </div>
+            )
+          }
+        />
+        <Route
+          path="/upload-medicine"
+          element={
+            user?.role === "pharmacist" ? (
+              <UploadMedicine user={user} />
+            ) : user ? (
+              <Navigate to="/unauthorized" />
+            ) : (
+              <div className="container text-center mt-5">
+                <h4 className="text-danger">🔒 Please log in to upload medicines</h4>
+              </div>
+            )
+          }
+        />
 
-      {/* Personal Care */}
-      <Route path="/personal-care" element={<PersonalCare />} />
-      <Route path="/personal-care/skin" element={<SkinCare />} />
-      <Route path="/personal-care/hair" element={<HairCare />} />
-      <Route path="/personal-care/baby-mom" element={<BabyMomCare />} />
-      <Route path="/personal-care/oral" element={<OralCare />} />
-      <Route path="/personal-care/elderly" element={<ElderlyCare />} />
+        {/* Personal Care */}
+        <Route path="/personal-care" element={<PersonalCare />} />
+        <Route path="/personal-care/skin" element={<SkinCare />} />
+        <Route path="/personal-care/hair" element={<HairCare />} />
+        <Route path="/personal-care/baby-mom" element={<BabyMomCare />} />
+        <Route path="/personal-care/oral" element={<OralCare />} />
+        <Route path="/personal-care/elderly" element={<ElderlyCare />} />
 
-      {/* Health Conditions */}
-      <Route path="/health-conditions" element={<HealthCondition />} />
-      <Route path="/health-conditions/bone-joint" element={<BoneJointCare />} />
-      <Route path="/health-conditions/digestive" element={<DigestiveCare />} />
-      <Route path="/health-conditions/eye" element={<EyeCare />} />
-      <Route path="/health-conditions/pain" element={<PainRelief />} />
-      <Route path="/health-conditions/smoking" element={<SmokingCessation />} />
-      <Route path="/health-conditions/liver" element={<LiverCare />} />
-      <Route path="/health-conditions/cold-cough" element={<ColdCough />} />
-      <Route path="/health-conditions/heart" element={<HeartCare />} />
-      <Route path="/health-conditions/kidney" element={<KidneyCare />} />
-      <Route path="/health-conditions/respiratory" element={<RespiratoryCare />} />
-      <Route path="/health-conditions/mental" element={<MentalWellness />} />
-      <Route path="/health-conditions/derma" element={<DermaCare />} />
+        {/* Health Conditions */}
+        <Route path="/health-conditions" element={<HealthCondition />} />
+        <Route path="/health-conditions/bone-joint" element={<BoneJointCare />} />
+        <Route path="/health-conditions/digestive" element={<DigestiveCare />} />
+        <Route path="/health-conditions/eye" element={<EyeCare />} />
+        <Route path="/health-conditions/pain" element={<PainRelief />} />
+        <Route path="/health-conditions/smoking" element={<SmokingCessation />} />
+        <Route path="/health-conditions/liver" element={<LiverCare />} />
+        <Route path="/health-conditions/cold-cough" element={<ColdCough />} />
+        <Route path="/health-conditions/heart" element={<HeartCare />} />
+        <Route path="/health-conditions/kidney" element={<KidneyCare />} />
+        <Route path="/health-conditions/respiratory" element={<RespiratoryCare />} />
+        <Route path="/health-conditions/mental" element={<MentalWellness />} />
+        <Route path="/health-conditions/derma" element={<DermaCare />} />
 
       {/* Vitamins */}
       <Route path="/vitamins" element={<VitaminsPage />} />
