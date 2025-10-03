@@ -1,0 +1,50 @@
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* Page title */
+h3.text-primary {
+  font-weight: 600;
+  font-size: 1.8rem;
+}
+
+/* Cart item list */
+.list-group-item {
+  border: none;
+  border-radius: 8px;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  transition: box-shadow 0.2s ease;
+}
+
+.list-group-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Item name */
+.list-group-item h5 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Price and quantity */
+.list-group-item small {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* Total section */
+.d-flex.justify-content-between h5 {
+  font-weight: 600;
+}
+
+/* Checkout button */
+.btn-success {
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.75rem;
+  border-radius: 8px;
+}

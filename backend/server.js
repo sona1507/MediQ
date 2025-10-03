@@ -57,15 +57,17 @@ import incidencesRoutes from "./routes/incidencesRoutes.js";
 import prescriptionRoutes from "./routes/prescriptionRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import cartRoutes from "./routes/cartRoutes.js";
 
 // ===============================
-// Routes
+// Route Mounting
 // ===============================
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/medicines", medicineRoutes);
 app.use("/api/incidences", incidencesRoutes);
 app.use("/api/prescriptions", prescriptionRoutes);
+app.use("/api/cart", cartRoutes);
 
 // ✅ Base route
 app.get("/", (req, res) => {
@@ -105,7 +107,7 @@ mongoose.connect(MONGO_URI, {
 })
   .then(() => console.log("✅ MongoDB connected successfully"))
   .catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
+    console.error("❌ MongoDB connection error:", err.message);
     process.exit(1);
   });
 

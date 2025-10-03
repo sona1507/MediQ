@@ -19,7 +19,6 @@ import "./index.css";
 import Checkout from "./pages/Checkout";
 import PrescriptionStatus from "./pages/PrescriptionStatus";
 
-
 // Personal Care
 import PersonalCare from "./components/personalcare/PersonalCare";
 import SkinCare from "./components/personalcare/SkinCare";
@@ -43,39 +42,39 @@ import RespiratoryCare from "./components/healthcondition/RespiratoryCare";
 import MentalWellness from "./components/healthcondition/MentalWellness";
 import DermaCare from "./components/healthcondition/DermaCare";
 
+import VitaminsPage from "./components/VitaminsPage"; 
+import Cart from './pages/Cart'; 
+
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(undefined); // ✅ Start with undefined
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [selectedMedicineId, setSelectedMedicineId] = useState(null);
 
-  // ✅ Load user from localStorage
-  useEffect(() => {
-    const loadUser = () => {
-      try {
-        const storedUser = localStorage.getItem("user");
-        const parsed = storedUser ? JSON.parse(storedUser) : null;
-        if (parsed && typeof parsed === "object" && parsed._id) {
-          setUser(parsed);
-        } else {
-          setUser(null);
-        }
-      } catch (err) {
-        console.error("❌ Error parsing user from localStorage:", err);
-        setUser(null);
-      }
-    };
+  // ✅ Load user from localStorage and validate
+ useEffect(() => {
+  const storedUser = localStorage.getItem("user");
+  try {
+    const parsed = storedUser ? JSON.parse(storedUser) : null;
+    if (
+      parsed &&
+      typeof parsed === "object" &&
+      (parsed.userId || parsed._id) &&
+      parsed.role
+    ) {
+      setUser(parsed);
+      console.log("👤 Logged in user:", parsed);
+    } else {
+      console.warn("🚫 Invalid user object in localStorage");
+      setUser(null);
+    }
+  } catch (err) {
+    console.error("❌ Error parsing user:", err);
+    setUser(null);
+  }
+}, []);
 
-    loadUser();
-    window.addEventListener("storage", loadUser);
-    return () => window.removeEventListener("storage", loadUser);
-  }, []);
-
-  // ✅ Debug log
-  useEffect(() => {
-    console.log("👤 Logged in user:", user);
-  }, [user]);
 
   // ✅ Scroll detection
   useEffect(() => {
@@ -94,7 +93,6 @@ export default function App() {
       }
     };
 
-    // Delay to ensure layout is ready
     const timeout = setTimeout(syncNavbarHeight, 100);
     return () => clearTimeout(timeout);
   }, []);
@@ -115,13 +113,26 @@ export default function App() {
     return () => clearTimeout(debounce);
   }, [query]);
 
+  // ✅ Log user changes
+  useEffect(() => {
+    console.log("👤 User state updated:", user);
+  }, [user]);
 
-  return (
+  // ✅ Guard: wait for user to initialize
+  if (user === undefined) {
+    return (
+      <div className="container my-5 text-center">
+        <h4 className="text-muted">Initializing user session...</h4>
+      </div>
+    );
+  }
+
+  
+return (
   <Router>
     <Navbar scrolled={scrolled} query={query} setQuery={setQuery} />
     <CategoryNavbar scrolled={scrolled} />
 
-    {/* ✅ Scroll to top on route change */}
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<Home scrolled={scrolled} user={user} />} />
@@ -131,9 +142,10 @@ export default function App() {
       <Route path="/medicines" element={<Medicines user={user} />} />
       <Route path="/buy/:id" element={<BuyMedicine user={user} />} />
       <Route path="/profile" element={<UserProfile user={user} />} />
-      <Route path="/checkout" element={<Checkout />} />
+      <Route path="/checkout" element={<Checkout user={user} />} />
       <Route path="/unauthorized" element={<Unauthorized />} />
       <Route path="/prescriptions" element={<PrescriptionStatus user={user} />} />
+      <Route path="/cart" element={<Cart user={user} />} />
 
       {/* Pharmacist Routes */}
       <Route
@@ -202,44 +214,45 @@ export default function App() {
       <Route path="/health-conditions/mental" element={<MentalWellness />} />
       <Route path="/health-conditions/derma" element={<DermaCare />} />
 
+      {/* Vitamins */}
+      <Route path="/vitamins" element={<VitaminsPage />} />
+
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
 
     {/* ✅ Navigate after render to avoid React warnings */}
     {selectedMedicineId && <Navigate to={`/buy/${selectedMedicineId}`} replace />}
-    
+
     {/* ✅ Search Suggestions */}
-   {suggestions.length > 0 && (
-  <div className="container search-suggestions-container">
-    <h5 className="mb-3 text-primary">
-      Showing results for: <span className="text-dark">{query}</span>
-    </h5>
-    <div className="row">
-      {suggestions.map((med) => (
-        <div key={med._id} className="col-md-4 mb-4">
-          <div className="medicine-card h-100 d-flex flex-column justify-content-between">
-            <div>
-              <h6>{med.name}</h6>
-              <p><strong>Category:</strong> {med.category}</p>
-              <p><strong>Symptoms:</strong> {med.symptoms?.join(", ")}</p>
-              <p className="text-muted">{med.description}</p>
-              <p><strong>Price:</strong> ₹{med.price}</p>
+    {suggestions.length > 0 && (
+      <div className="container search-suggestions-container">
+        <h5 className="mb-3 text-primary">
+          Showing results for: <span className="text-dark">{query}</span>
+        </h5>
+        <div className="row">
+          {suggestions.map((med) => (
+            <div key={med._id} className="col-md-4 mb-4">
+              <div className="medicine-card h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <h6>{med.name}</h6>
+                  <p><strong>Category:</strong> {med.category}</p>
+                  <p><strong>Symptoms:</strong> {med.symptoms?.join(", ")}</p>
+                  <p className="text-muted">{med.description}</p>
+                  <p><strong>Price:</strong> ₹{med.price}</p>
+                </div>
+                <button
+                  className="btn btn-outline-primary mt-3"
+                  onClick={() => setSelectedMedicineId(med._id)}
+                >
+                  View
+                </button>
+              </div>
             </div>
-            <button
-              className="btn btn-outline-primary mt-3"
-              onClick={() => setSelectedMedicineId(med._id)}
-            >
-              View
-            </button>
-          </div>
+          ))}
         </div>
-      ))}
-    </div>
-  </div>
-)}
-
-
+      </div>
+    )}
   </Router>
 );
 }

@@ -1,10 +1,11 @@
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
 import api from "../api/axios";
 
 export default function BuyMedicine({ user }) {
   const { id } = useParams();
-  const userId = user?.userId;
+  const userId = user?.userId || user?._id;
+  const navigate = useNavigate();
 
   const [medicine, setMedicine] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,14 +16,13 @@ export default function BuyMedicine({ user }) {
 
   const isPrescriptionRequired = medicine?.prescriptionRequired === "Required";
 
-  // ✅ Fetch medicine by ID
   useEffect(() => {
     const fetchMedicine = async () => {
       try {
         const { data } = await api.get(`/medicines/${id}`);
         setMedicine(data);
       } catch (err) {
-        console.error("Failed to fetch medicine:", err);
+        console.error("❌ Failed to fetch medicine:", err.message || err);
         setMedicine(null);
       } finally {
         setLoading(false);
@@ -32,7 +32,6 @@ export default function BuyMedicine({ user }) {
     fetchMedicine();
   }, [id]);
 
-  // ✅ Memoized prescription status fetcher
   const refreshStatus = useCallback(async () => {
     if (!userId || !medicine?._id || !isPrescriptionRequired) return;
 
@@ -42,7 +41,7 @@ export default function BuyMedicine({ user }) {
       });
       setPrescriptionStatus(data?.status || null);
     } catch (err) {
-      console.error("Failed to fetch prescription status:", err);
+      console.error("❌ Failed to fetch prescription status:", err.message || err);
       setPrescriptionStatus(null);
     }
   }, [userId, medicine?._id, isPrescriptionRequired]);
@@ -77,26 +76,39 @@ export default function BuyMedicine({ user }) {
         throw new Error("Unexpected response");
       }
     } catch (err) {
-      console.error("Upload failed:", err);
+      console.error("❌ Upload failed:", err.message || err);
       alert("Failed to upload prescription.");
     } finally {
       setUploading(false);
     }
   };
 
-  const handleAddToCart = () => {
-    if (isPrescriptionRequired && !prescriptionStatus) {
-      setHighlightUpload(true);
+  const handleAddToCart = async () => {
+    if (!userId || !medicine?._id) {
+      alert("Missing user or medicine ID.");
       return;
     }
 
-    if (isPrescriptionRequired && prescriptionStatus !== "Approved") {
-      alert(`⛔ Prescription status is "${prescriptionStatus}". You can proceed only after approval.`);
-      return;
-    }
+    try {
+      const res = await api.post("/cart/add", {
+        userId,
+        productId: medicine._id,
+      });
 
-    console.log("✅ Medicine added to cart:", medicine.name);
-    // TODO: Add to cart logic or navigation
+      console.log("🛒 Cart add response:", res.data);
+
+     if (res.data?.success) {
+  const itemName = medicine.name || "Medicine";
+  localStorage.setItem("addedToCart", itemName); // ✅ Store message
+  navigate("/cart");
+}
+else {
+        throw new Error("Cart response missing success flag");
+      }
+    } catch (err) {
+      console.error("❌ Failed to add to cart:", err.message || err);
+      alert("Failed to add item to cart.");
+    }
   };
 
   if (loading) return <p className="text-center">Loading medicine details…</p>;
@@ -134,7 +146,7 @@ export default function BuyMedicine({ user }) {
         <p><b>Stock:</b> {medicine.stock}</p>
         <p><b>Dosage:</b> {medicine.dosage}</p>
         <p><b>Symptoms:</b> {medicine.symptoms?.join(", ")}</p>
-        <p><b>Description:</b> {medicine.description}</p>
+        <p><b>Description:</b> {medicine.description || "Not Available"}</p>
         <p><b>Prescription:</b> {medicine.prescriptionRequired}</p>
 
         {isPrescriptionRequired && (

@@ -1,0 +1,57 @@
+.vitamins-container {
+  max-width: 1200px;
+  margin: auto;
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-img-top {
+  height: 200px;
+  object-fit: cover;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: #666;
+  min-height: 40px;
+}
+
+.btn-outline-success {
+  border-radius: 6px;
+  font-weight: 500;
+}
+.product-image {
+  height: 120px; /* smaller height */
+  width: auto;
+  max-width: 80%;
+  margin: 0 auto;
+  padding: 8px;
+  object-fit: contain; /* prevents cropping */
+  display: block;
+}
+

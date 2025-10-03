@@ -14,9 +14,10 @@ const CategoryNavbar = ({ scrolled }) => (
         <li className="nav-item">
           <Link className="nav-link" to="/health-conditions">Health Conditions</Link>
         </li>
-        <li className="nav-item">
-          <Link className="nav-link" to="/vitamins-supplements">Vitamins & Supplements</Link>
-        </li>
+        <Link to="/vitamins" className="nav-link">
+          Vitamins & Supplements
+        </Link>
+
         <li className="nav-item">
           <Link className="nav-link" to="/health-guide">Health Guide</Link>
         </li>
