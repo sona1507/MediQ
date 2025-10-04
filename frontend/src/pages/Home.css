@@ -1,73 +1,253 @@
+/* 🌿 General Page Styles */
 .home {
-  font-family: 'Segoe UI', sans-serif;
+  font-family: "Poppins", "Segoe UI", sans-serif;
   text-align: center;
-  padding: 30px;
+  background: #f8fafc;
+  color: #333;
+  overflow-x: hidden;
 }
 
-/* Hero Section */
-.hero {
-  background-size: cover;
-  background-position: center;
-  padding: 60px 20px;
-  border-radius: 12px;
-  text-align: center;
-  color: white;
+/* 🌟 Hero Section - Carousel Specific Styles */
+.hero-container {
+    position: relative;
+    padding: 0;
+}
+
+.hero-slide {
+    height: 70vh;
+    /* This ensures that the text color (white) will show up better */
+    position: relative;
+}
+
+/* ⭐️ Dark overlay to improve text contrast on the carousel images */
+.hero-slide::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* Dark overlay for better text readability - adjusted to 50% opacity */
+    background: rgba(0, 0, 0, 0.5); 
+}
+
+/* ⭐️ OVERLAY SEARCH BAR - Styling for the restored text */
+.overlay-search-bar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+}
+
+.overlay-search-bar h1 {
+    font-weight: 900;
+    /* ⭐️ Made text white (as requested) and added shadow for pop */
+    color: white !important; 
+    text-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+.overlay-search-bar p {
+    font-weight: 300;
+    /* ⭐️ Made text white (as requested) and added shadow for pop */
+    color: white !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    line-height: 1.5;
+}
+
+/* ⭐️ FOOTER LINK STYLING (Simple, non-highlighted links) */
+/* The 'footer-link-text' class removes default link color and underline */
+.footer-link-text {
+    /* Inherit color from the parent (which is 'text-muted' in Home.jsx) */
+    color: inherit !important; 
+    text-decoration: none !important;
+    transition: color 0.2s ease;
+}
+
+.footer-link-text:hover {
+    color: #333 !important; /* A subtle darker text color on hover */
+    text-decoration: none !important;
+}
+
+/* Optional: Make the list items a bit more compact */
+.footer-link-list li {
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+}
+
+/* Social Icons Styling */
+.social-icon {
+    color: #6c757d; /* Muted color */
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.social-icon:hover {
+    color: #dc3545; /* Highlight color on hover */
+    transform: scale(1.1);
 }
 
 
-.hero h1 {
-  font-size: 42px;
-  margin-bottom: 10px;
-}
+/* --- Original Styles (Kept for completeness, feel free to remove duplicates) --- */
 
-.hero .brand {
-  font-weight: bold;
-  border-left: 3px solid white;
-  padding-left: 5px;
-}
-
-.hero p {
-  font-size: 18px;
-  margin-bottom: 20px;
-}
-
-/* Features Section */
+/* 💊 Features Section */
 .features {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 20px;
-  margin: 40px 0;
+  gap: 25px;
+  margin: 60px auto;
+  padding: 0 20px;
 }
 
 .feature-card {
-  background: #f8f9fa;
-  padding: 20px;
-  width: 250px;
-  border-radius: 10px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  background: white;
+  padding: 25px;
+  width: 300px;
+  border-radius: 14px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
 }
 
 .feature-card h3 {
-  margin-bottom: 10px;
-  color: #007bff;
+  color: #0077b6;
+  margin-bottom: 12px;
 }
 
-/* Quick Links */
+.feature-card p {
+  font-size: 15px;
+  color: #555;
+}
+
+/* ⚡ Quick Links Section */
 .quick-links {
-  margin: 40px 0;
+  background: linear-gradient(135deg, #0077b6, #00b4d8);
+  color: white;
+  padding: 60px 20px;
+  border-radius: 16px;
+  margin: 60px auto;
+  width: 90%;
+  max-width: 1100px;
+  box-shadow: 0 5px 20px rgba(0, 123, 255, 0.2);
+}
+
+.quick-links h2 {
+  font-size: 28px;
+  margin-bottom: 25px;
+  font-weight: 600;
 }
 
 .link-btn {
   display: inline-block;
   margin: 10px;
-  padding: 12px 25px;
-  background: #007bff;
-  color: white;
-  border-radius: 8px;
+  padding: 12px 28px;
+  background: #fff;
+  color: #0077b6;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: 0.3s;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+.link-btn:hover {
+  background: #023e8a;
+  color: #fff;
+  transform: translateY(-3px);
+}
+
+/* 🧍 About Section */
+.about {
+  padding: 80px 20px;
+  text-align: center;
+  background: #ffffff;
+}
+
+.about h2 {
+  color: #0077b6;
+  font-size: 32px;
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+.about p {
+  color: #555;
+  max-width: 800px;
+  margin: 0 auto 20px;
+  line-height: 1.8;
+}
+
+/* 🦶 Footer Section */
+.footer {
+  background: #0a192f;
+  color: #fff;
+  padding: 60px 20px;
+  text-align: center;
+  border-top: 4px solid #00b4d8;
+}
+
+.footer h4 {
+  font-weight: 600;
+  color: #00b4d8;
+  margin-bottom: 15px;
+}
+
+.footer p,
+.footer a {
+  color: #a8dadc;
+  font-size: 15px;
   text-decoration: none;
   transition: 0.3s;
 }
 
-.link-btn:hover {
-  background: #0056b3;
+.footer a:hover {
+  color: #fff;
+}
+
+.footer .social-icons {
+  margin-top: 20px;
+}
+
+.footer .social-icons a {
+  font-size: 24px;
+  margin: 0 12px;
+  color: #00b4d8;
+  transition: 0.3s ease;
+}
+
+.footer .social-icons a:hover {
+  color: #fff;
+  transform: scale(1.1);
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 992px) {
+  .features {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .feature-card {
+    width: 85%;
+  }
+
+  /* Adjust hero text size */
+  .overlay-search-bar h1 {
+    font-size: 2.5rem !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .overlay-search-bar {
+    padding: 0 15px;
+  }
+
+  .overlay-search-bar h1 {
+    font-size: 2rem !important;
+  }
 }
