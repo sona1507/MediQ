@@ -6,6 +6,7 @@ import CategoryNavbar from "../components/CategoryNavbar";
 import PersonalCare from "../components/personalcare/PersonalCare";
 import api from "../api/axios";
 import "bootstrap/dist/js/bootstrap.bundle";
+import './Home.css';
 // NOTE: Make sure you also include bootstrap-icons if you use them.
 // import "bootstrap-icons/font/bootstrap-icons.css"; 
 
@@ -127,15 +128,15 @@ function FooterSection() {
         {/* Platform Metrics */}
         <div className="row mb-5">
           <div className="col-md-4">
-            <h3 className="text-primary fw-bold">196M+</h3>
+            <h3 className="text-primary fw-bold">20M+</h3>
             <p className="text-muted">Visitors across Kerala</p>
           </div>
           <div className="col-md-4">
-            <h3 className="text-primary fw-bold">29M+</h3>
+            <h3 className="text-primary fw-bold">12M+</h3>
             <p className="text-muted">Orders Delivered</p>
           </div>
           <div className="col-md-4">
-            <h3 className="text-primary fw-bold">800+</h3>
+            <h3 className="text-primary fw-bold">52+</h3>
             <p className="text-muted">Cities MediQ Operates In</p>
           </div>
         </div>
@@ -229,7 +230,7 @@ function FooterSection() {
             <form>
               <label className="form-label text-muted">Want daily dose of health?</label>
               <input type="email" className="form-control mb-2" placeholder="Enter your email" />
-              <button type="submit" className="btn btn-danger w-100">SIGN UP</button>
+              <button type="submit" className="btn btn-success w-100">SIGN UP</button>
             </form>
           </div>
         </div>
@@ -342,7 +343,7 @@ function Home() {
         <div className="overlay-search-bar">
           <div className="welcome-text">
             <h1 className="fw-bold mb-3">
-              Welcome to <span className="text-info">MediQ</span>
+              Welcome to <span className="text-primary">Medi</span><span className="text-dark">Q</span>
             </h1>
             <p className="text-muted mb-4">
               Your trusted pharmacy partner – search, order & manage medicines online.

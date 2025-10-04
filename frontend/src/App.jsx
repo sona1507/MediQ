@@ -1,49 +1,50 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import CategoryNavbar from "./components/CategoryNavbar";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import UploadPrescription from "./pages/UploadPrescription";
-import PharmacistDashboard from "./pages/PharmacistDashboard";
-import Unauthorized from "./pages/Unauthorized";
-import Medicines from "./pages/Medicines";
-import BuyMedicine from "./pages/BuyMedicine";
-import MedicineManager from "./pages/MedicineManager";
-import UserProfile from "./components/UserProfile";
-import UploadMedicine from "./pages/UploadMedicine";
-import api from "./api/axios";
+import Navbar from "./components/Navbar.jsx"; // Added .jsx
+import CategoryNavbar from "./components/CategoryNavbar.jsx"; // Added .jsx
+import Home from "./pages/Home.jsx"; // Added .jsx
+import Login from "./pages/Login.jsx"; // Added .jsx
+import Register from "./pages/Register.jsx"; // Added .jsx
+import UploadPrescription from "./pages/UploadPrescription.jsx"; // Added .jsx
+import PharmacistDashboard from "./pages/PharmacistDashboard.jsx"; // Added .jsx
+import Unauthorized from "./pages/Unauthorized.jsx"; // Added .jsx
+import Medicines from "./pages/Medicines.jsx"; // Added .jsx
+import BuyMedicine from "./pages/BuyMedicine.jsx"; // Added .jsx
+import MedicineManager from "./pages/MedicineManager.jsx"; // Added .jsx
+import UserProfile from "./components/UserProfile.jsx"; // Added .jsx
+import UploadMedicine from "./pages/UploadMedicine.jsx"; // Added .jsx
+import api from "./api/axios.js"; // Changed to .js (assuming standard JS module)
 import "./App.css";
 import "./index.css";
-import Checkout from "./pages/Checkout";
-import PrescriptionStatus from "./pages/PrescriptionStatus";
+import Checkout from "./pages/Checkout.jsx"; // Added .jsx
+import PrescriptionStatus from "./pages/PrescriptionStatus.jsx"; // Added .jsx
+import HealthGuide from "./pages/HealthGuide.jsx"; // Added .jsx
 
 // Personal Care
-import PersonalCare from "./components/personalcare/PersonalCare";
-import SkinCare from "./components/personalcare/SkinCare";
-import HairCare from "./components/personalcare/HairCare";
-import BabyMomCare from "./components/personalcare/BabyMomCare";
-import OralCare from "./components/personalcare/OralCare";
-import ElderlyCare from "./components/personalcare/ElderlyCare";
+import PersonalCare from "./components/personalcare/PersonalCare.jsx"; // Added .jsx
+import SkinCare from "./components/personalcare/SkinCare.jsx"; // Added .jsx
+import HairCare from "./components/personalcare/HairCare.jsx"; // Added .jsx
+import BabyMomCare from "./components/personalcare/BabyMomCare.jsx"; // Added .jsx
+import OralCare from "./components/personalcare/OralCare.jsx"; // Added .jsx
+import ElderlyCare from "./components/personalcare/ElderlyCare.jsx"; // Added .jsx
 
 // Health Conditions
-import HealthCondition from "./components/healthcondition/HealthCondition";
-import BoneJointCare from "./components/healthcondition/BoneJointCare";
-import DigestiveCare from "./components/healthcondition/DigestiveCare";
-import EyeCare from "./components/healthcondition/EyeCare";
-import PainRelief from "./components/healthcondition/PainRelief";
-import SmokingCessation from "./components/healthcondition/SmokingCessation";
-import LiverCare from "./components/healthcondition/LiverCare";
-import ColdCough from "./components/healthcondition/ColdCough";
-import HeartCare from "./components/healthcondition/HeartCare";
-import KidneyCare from "./components/healthcondition/KidneyCare";
-import RespiratoryCare from "./components/healthcondition/RespiratoryCare";
-import MentalWellness from "./components/healthcondition/MentalWellness";
-import DermaCare from "./components/healthcondition/DermaCare";
+import HealthCondition from "./components/healthcondition/HealthCondition.jsx"; // Added .jsx
+import BoneJointCare from "./components/healthcondition/BoneJointCare.jsx"; // Added .jsx
+import DigestiveCare from "./components/healthcondition/DigestiveCare.jsx"; // Added .jsx
+import EyeCare from "./components/healthcondition/EyeCare.jsx"; // Added .jsx
+import PainRelief from "./components/healthcondition/PainRelief.jsx"; // Added .jsx
+import SmokingCessation from "./components/healthcondition/SmokingCessation.jsx"; // Added .jsx
+import LiverCare from "./components/healthcondition/LiverCare.jsx"; // Added .jsx
+import ColdCough from "./components/healthcondition/ColdCough.jsx"; // Added .jsx
+import HeartCare from "./components/healthcondition/HeartCare.jsx"; // Added .jsx
+import KidneyCare from "./components/healthcondition/KidneyCare.jsx"; // Added .jsx
+import RespiratoryCare from "./components/healthcondition/RespiratoryCare.jsx"; // Added .jsx
+import MentalWellness from "./components/healthcondition/MentalWellness.jsx"; // Added .jsx
+import DermaCare from "./components/healthcondition/DermaCare.jsx"; // Added .jsx
 
-import VitaminsPage from "./components/VitaminsPage"; 
-import Cart from './pages/Cart'; 
+import VitaminsPage from "./components/VitaminsPage.jsx"; // Added .jsx
+import Cart from './pages/Cart.jsx'; // Added .jsx
 
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
@@ -175,6 +176,13 @@ export default function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/prescriptions" element={<PrescriptionStatus user={user} />} />
         <Route path="/cart" element={<Cart user={user} />} />
+        
+        {/* ⬅️ NEW: Health Guide Routes */}
+        <Route path="/health-guide" element={<HealthGuide />} />
+        {/* Placeholder for specific article pages, matching the links in HealthGuide.jsx */}
+        <Route path="/articles/:id" element={<div className="container mt-5"><h3>Article Detail Page (ID: {window.location.pathname.split('/').pop()})</h3><p>Content goes here...</p></div>} />
+        <Route path="/blogs" element={<div className="container mt-5"><h3>All Blogs Page</h3><p>List of all blogs goes here...</p></div>} />
+        <Route path="/blogs/:id" element={<div className="container mt-5"><h3>Blog Detail Page (ID: {window.location.pathname.split('/').pop()})</h3><p>Content goes here...</p></div>} />
 
         {/* Pharmacist Routes */}
         <Route

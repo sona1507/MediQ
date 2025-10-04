@@ -1,0 +1,182 @@
+/* ------------------------------------------- */
+/* General Styles */
+/* ------------------------------------------- */
+.health-guide-container {
+    padding-top: 20px;
+    font-family: 'Inter', sans-serif;
+    color: #333;
+    min-height: 100vh;
+}
+
+/* ------------------------------------------- */
+/* 1. Hero Section */
+/* ------------------------------------------- */
+.hero-section {
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); /* Light blue gradient */
+    padding: 6rem 0 7rem 0;
+    margin-bottom: 3rem;
+    border-radius: 0 0 30px 30px;
+    box-shadow: 0 8px 16px rgba(0, 50, 100, 0.1);
+    animation: fadeIn 0.8s ease-out;
+}
+
+.hero-section h1 {
+    color: #0d47a1; /* Darker blue for prominence */
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.hero-section .lead {
+    color: #424242;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.hero-section .form-control {
+    border: 2px solid #ff5252; /* Bright red border */
+    border-right: none;
+    transition: all 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.hero-section .form-control:focus {
+    border-color: #f44336;
+    box-shadow: 0 0 0 0.25rem rgba(255, 82, 82, 0.25);
+}
+
+.hero-section .btn-danger {
+    background-color: #ff5252;
+    border-color: #ff5252;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.hero-section .btn-danger:hover {
+    background-color: #f44336;
+    border-color: #f44336;
+    transform: translateY(-1px);
+}
+
+/* ------------------------------------------- */
+/* 2. Disease Spotlights & Transition */
+/* ------------------------------------------- */
+.transition-hover {
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+    border: 1px solid transparent !important; /* Base border */
+}
+
+.transition-hover:hover {
+    transform: translateY(-7px);
+    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1) !important;
+    border-color: #81c784 !important; /* Subtle green border on hover */
+}
+
+.card h6 {
+    line-height: 1.4;
+}
+
+/* ------------------------------------------- */
+/* 3. Featured Articles */
+/* ------------------------------------------- */
+.featured-articles-section {
+    background-color: #f8fcf9; /* Very light green background */
+    padding: 5rem 0;
+}
+
+.card-img-top {
+    /* Ensures the image transition is smooth */
+    transition: transform 0.5s ease-in-out;
+}
+
+.card:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.card .badge {
+    padding: 0.5em 1em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-radius: 50px;
+}
+
+.card-title {
+    color: #1a1a1a;
+}
+
+.btn-outline-danger {
+    color: #ff5252;
+    border-color: #ff5252;
+    font-weight: 500;
+    border-radius: 50px;
+}
+
+.btn-outline-danger:hover {
+    background-color: #ff5252;
+    color: white;
+}
+
+/* ------------------------------------------- */
+/* 4. Latest Blogs & Subscribe */
+/* ------------------------------------------- */
+.list-group-item {
+    border-left: 5px solid transparent;
+    transition: all 0.3s;
+    border-radius: 10px !important;
+}
+
+.list-group-item:hover {
+    background-color: #e8f5e9 !important; /* Lighter green on hover */
+    border-left-color: #4caf50; /* Green accent on hover */
+    box-shadow: 0 2px 10px rgba(76, 175, 80, 0.1) !important;
+}
+
+.list-group-item h6 {
+    color: #1e88e5; /* Primary blue for blog titles */
+}
+
+.list-group-item small {
+    color: #616161 !important;
+}
+
+.btn-lg.rounded-pill {
+    font-size: 1.1rem;
+    padding: 10px 30px;
+    border-radius: 50px;
+}
+
+/* Newsletter Card */
+.card.bg-success {
+    background-color: #4caf50 !important; /* Vibrant green */
+    border: none;
+}
+
+.card.bg-success .form-control {
+    border: none;
+    box-shadow: none;
+}
+
+.card.bg-success .btn-light {
+    color: #4caf50;
+    font-weight: 700;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ------------------------------------------- */
+/* Responsive Adjustments */
+/* ------------------------------------------- */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 4rem 0;
+    }
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    .hero-section .input-group {
+        width: 100% !important;
+    }
+}
