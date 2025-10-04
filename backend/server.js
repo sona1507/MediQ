@@ -16,6 +16,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 
+// ✅ Optional: Log incoming requests
+app.use((req, res, next) => {
+  console.log(`📥 ${req.method} ${req.originalUrl}`);
+  next();
+});
+
 // ✅ CORS setup
 const allowedOrigins = [
   "http://localhost:3000",

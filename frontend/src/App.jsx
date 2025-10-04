@@ -1,50 +1,51 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Navbar from "./components/Navbar.jsx"; // Added .jsx
-import CategoryNavbar from "./components/CategoryNavbar.jsx"; // Added .jsx
-import Home from "./pages/Home.jsx"; // Added .jsx
-import Login from "./pages/Login.jsx"; // Added .jsx
-import Register from "./pages/Register.jsx"; // Added .jsx
-import UploadPrescription from "./pages/UploadPrescription.jsx"; // Added .jsx
-import PharmacistDashboard from "./pages/PharmacistDashboard.jsx"; // Added .jsx
-import Unauthorized from "./pages/Unauthorized.jsx"; // Added .jsx
-import Medicines from "./pages/Medicines.jsx"; // Added .jsx
-import BuyMedicine from "./pages/BuyMedicine.jsx"; // Added .jsx
-import MedicineManager from "./pages/MedicineManager.jsx"; // Added .jsx
-import UserProfile from "./components/UserProfile.jsx"; // Added .jsx
-import UploadMedicine from "./pages/UploadMedicine.jsx"; // Added .jsx
-import api from "./api/axios.js"; // Changed to .js (assuming standard JS module)
+import Navbar from "./components/Navbar.jsx";
+import CategoryNavbar from "./components/CategoryNavbar.jsx";
+import Home from "./pages/Home.jsx";
+import Login from "./pages/Login.jsx";
+import Register from "./pages/Register.jsx";
+import UploadPrescription from "./pages/UploadPrescription.jsx";
+import PharmacistDashboard from "./pages/PharmacistDashboard.jsx";
+import Unauthorized from "./pages/Unauthorized.jsx";
+import Medicines from "./pages/Medicines.jsx";
+import BuyMedicine from "./pages/BuyMedicine.jsx";
+import MedicineManager from "./pages/MedicineManager.jsx";
+import UserProfile from "./components/UserProfile.jsx";
+import UploadMedicine from "./pages/UploadMedicine.jsx";
+import api from "./api/axios.js";
 import "./App.css";
 import "./index.css";
-import Checkout from "./pages/Checkout.jsx"; // Added .jsx
-import PrescriptionStatus from "./pages/PrescriptionStatus.jsx"; // Added .jsx
-import HealthGuide from "./pages/HealthGuide.jsx"; // Added .jsx
+import Checkout from "./pages/Checkout.jsx";
+import PrescriptionStatus from "./pages/PrescriptionStatus.jsx";
+import HealthGuide from "./pages/HealthGuide.jsx";
 
 // Personal Care
-import PersonalCare from "./components/personalcare/PersonalCare.jsx"; // Added .jsx
-import SkinCare from "./components/personalcare/SkinCare.jsx"; // Added .jsx
-import HairCare from "./components/personalcare/HairCare.jsx"; // Added .jsx
-import BabyMomCare from "./components/personalcare/BabyMomCare.jsx"; // Added .jsx
-import OralCare from "./components/personalcare/OralCare.jsx"; // Added .jsx
-import ElderlyCare from "./components/personalcare/ElderlyCare.jsx"; // Added .jsx
+import PersonalCare from "./components/personalcare/PersonalCare.jsx";
+import SkinCare from "./components/personalcare/SkinCare.jsx";
+import HairCare from "./components/personalcare/HairCare.jsx";
+import BabyMomCare from "./components/personalcare/BabyMomCare.jsx";
+import OralCare from "./components/personalcare/OralCare.jsx";
+import ElderlyCare from "./components/personalcare/ElderlyCare.jsx";
 
 // Health Conditions
-import HealthCondition from "./components/healthcondition/HealthCondition.jsx"; // Added .jsx
-import BoneJointCare from "./components/healthcondition/BoneJointCare.jsx"; // Added .jsx
-import DigestiveCare from "./components/healthcondition/DigestiveCare.jsx"; // Added .jsx
-import EyeCare from "./components/healthcondition/EyeCare.jsx"; // Added .jsx
-import PainRelief from "./components/healthcondition/PainRelief.jsx"; // Added .jsx
-import SmokingCessation from "./components/healthcondition/SmokingCessation.jsx"; // Added .jsx
-import LiverCare from "./components/healthcondition/LiverCare.jsx"; // Added .jsx
-import ColdCough from "./components/healthcondition/ColdCough.jsx"; // Added .jsx
-import HeartCare from "./components/healthcondition/HeartCare.jsx"; // Added .jsx
-import KidneyCare from "./components/healthcondition/KidneyCare.jsx"; // Added .jsx
-import RespiratoryCare from "./components/healthcondition/RespiratoryCare.jsx"; // Added .jsx
-import MentalWellness from "./components/healthcondition/MentalWellness.jsx"; // Added .jsx
-import DermaCare from "./components/healthcondition/DermaCare.jsx"; // Added .jsx
+import HealthCondition from "./components/healthcondition/HealthCondition.jsx";
+import BoneJointCare from "./components/healthcondition/BoneJointCare.jsx";
+import DigestiveCare from "./components/healthcondition/DigestiveCare.jsx";
+import EyeCare from "./components/healthcondition/EyeCare.jsx";
+import PainRelief from "./components/healthcondition/PainRelief.jsx";
+import SmokingCessation from "./components/healthcondition/SmokingCessation.jsx";
+import LiverCare from "./components/healthcondition/LiverCare.jsx";
+import ColdCough from "./components/healthcondition/ColdCough.jsx";
+import HeartCare from "./components/healthcondition/HeartCare.jsx";
+import KidneyCare from "./components/healthcondition/KidneyCare.jsx";
+import RespiratoryCare from "./components/healthcondition/RespiratoryCare.jsx";
+import MentalWellness from "./components/healthcondition/MentalWellness.jsx";
+import DermaCare from "./components/healthcondition/DermaCare.jsx";
 
-import VitaminsPage from "./components/VitaminsPage.jsx"; // Added .jsx
-import Cart from './pages/Cart.jsx'; // Added .jsx
+import VitaminsPage from "./components/VitaminsPage.jsx";
+import Cart from "./pages/Cart.jsx";
+import Orders from "./pages/Orders.jsx";
 
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
@@ -166,8 +167,8 @@ export default function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home scrolled={scrolled} user={user} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login setUser={setUser} />} />
+        <Route path="/register" element={<Register setUser={setUser} />} />
         <Route path="/upload" element={<UploadPrescription user={user} />} />
         <Route path="/medicines" element={<Medicines user={user} />} />
         <Route path="/buy/:id" element={<BuyMedicine user={user} />} />
@@ -176,92 +177,123 @@ export default function App() {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/prescriptions" element={<PrescriptionStatus user={user} />} />
         <Route path="/cart" element={<Cart user={user} />} />
-        
-        {/* ⬅️ NEW: Health Guide Routes */}
+        <Route path="/orders" element={<Orders user={user} />} />
+<Route path="/orders" element={<Orders user={user} />} />
+
+
+        {/* Health Guide */}
         <Route path="/health-guide" element={<HealthGuide />} />
-        {/* Placeholder for specific article pages, matching the links in HealthGuide.jsx */}
-        <Route path="/articles/:id" element={<div className="container mt-5"><h3>Article Detail Page (ID: {window.location.pathname.split('/').pop()})</h3><p>Content goes here...</p></div>} />
-        <Route path="/blogs" element={<div className="container mt-5"><h3>All Blogs Page</h3><p>List of all blogs goes here...</p></div>} />
-        <Route path="/blogs/:id" element={<div className="container mt-5"><h3>Blog Detail Page (ID: {window.location.pathname.split('/').pop()})</h3><p>Content goes here...</p></div>} />
+      <Route
+        path="/articles/:id"
+        element={
+          <div className="container mt-5">
+            <h3>Article Detail Page (ID: {window.location.pathname.split("/").pop()})</h3>
+            <p>Content goes here...</p>
+          </div>
+        }
+      />
+      <Route
+        path="/blogs"
+        element={
+          <div className="container mt-5">
+            <h3>All Blogs Page</h3>
+            <p>List of all blogs goes here...</p>
+          </div>
+        }
+      />
+      <Route
+        path="/blogs/:id"
+        element={
+          <div className="container mt-5">
+            <h3>Blog Detail Page (ID: {window.location.pathname.split("/").pop()})</h3>
+            <p>Content goes here...</p>
+          </div>
+        }
+      />
 
-        {/* Pharmacist Routes */}
-        <Route
-          path="/pharmacist"
-          element={
-            user?.role === "pharmacist" ? (
-              <PharmacistDashboard user={user} />
-            ) : user ? (
-              <Navigate to="/unauthorized" />
-            ) : (
-              <div className="container text-center mt-5">
-                <h4 className="text-danger">🔒 Please log in to access the pharmacist dashboard</h4>
-              </div>
-            )
-          }
-        />
-        <Route
-          path="/manage-medicines"
-          element={
-            user?.role === "pharmacist" ? (
-              <MedicineManager user={user} />
-            ) : user ? (
-              <Navigate to="/unauthorized" />
-            ) : (
-              <div className="container text-center mt-5">
-                <h4 className="text-danger">🔒 Please log in to manage medicines</h4>
-              </div>
-            )
-          }
-        />
-        <Route
-          path="/upload-medicine"
-          element={
-            user?.role === "pharmacist" ? (
-              <UploadMedicine user={user} />
-            ) : user ? (
-              <Navigate to="/unauthorized" />
-            ) : (
-              <div className="container text-center mt-5">
-                <h4 className="text-danger">🔒 Please log in to upload medicines</h4>
-              </div>
-            )
-          }
-        />
+      {/* Pharmacist Routes */}
+      <Route
+        path="/pharmacist"
+        element={
+          user?.role === "pharmacist" ? (
+            <PharmacistDashboard user={user} />
+          ) : user ? (
+            <Navigate to="/unauthorized" />
+          ) : (
+            <div className="container text-center mt-5">
+              <h4 className="text-danger">🔒 Please log in to access the pharmacist dashboard</h4>
+            </div>
+          )
+        }
+      />
+      <Route
+        path="/manage-medicines"
+        element={
+          user?.role === "pharmacist" ? (
+            <MedicineManager user={user} />
+          ) : user ? (
+            <Navigate to="/unauthorized" />
+          ) : (
+            <div className="container text-center mt-5">
+              <h4 className="text-danger">🔒 Please log in to manage medicines</h4>
+            </div>
+          )
+        }
+      />
+      <Route
+        path="/upload-medicine"
+        element={
+          user?.role === "pharmacist" ? (
+            <UploadMedicine user={user} />
+          ) : user ? (
+            <Navigate to="/unauthorized" />
+          ) : (
+            <div className="container text-center mt-5">
+              <h4 className="text-danger">🔒 Please log in to upload medicines</h4>
+            </div>
+          )
+        }
+      />
 
-        {/* Personal Care */}
-        <Route path="/personal-care" element={<PersonalCare />} />
-        <Route path="/personal-care/skin" element={<SkinCare />} />
-        <Route path="/personal-care/hair" element={<HairCare />} />
-        <Route path="/personal-care/baby-mom" element={<BabyMomCare />} />
-        <Route path="/personal-care/oral" element={<OralCare />} />
-        <Route path="/personal-care/elderly" element={<ElderlyCare />} />
+      {/* Personal Care */}
+      <Route path="/personal-care" element={<PersonalCare />} />
+      <Route path="/personal-care/skin" element={<SkinCare />} />
+      <Route path="/personal-care/hair" element={<HairCare />} />
+      <Route path="/personal-care/baby-mom" element={<BabyMomCare />} />
+      <Route path="/personal-care/oral" element={<OralCare />} />
+      <Route path="/personal-care/elderly" element={<ElderlyCare />} />
 
-        {/* Health Conditions */}
-        <Route path="/health-conditions" element={<HealthCondition />} />
-        <Route path="/health-conditions/bone-joint" element={<BoneJointCare />} />
-        <Route path="/health-conditions/digestive" element={<DigestiveCare />} />
-        <Route path="/health-conditions/eye" element={<EyeCare />} />
-        <Route path="/health-conditions/pain" element={<PainRelief />} />
-        <Route path="/health-conditions/smoking" element={<SmokingCessation />} />
-        <Route path="/health-conditions/liver" element={<LiverCare />} />
-        <Route path="/health-conditions/cold-cough" element={<ColdCough />} />
-        <Route path="/health-conditions/heart" element={<HeartCare />} />
-        <Route path="/health-conditions/kidney" element={<KidneyCare />} />
-        <Route path="/health-conditions/respiratory" element={<RespiratoryCare />} />
-        <Route path="/health-conditions/mental" element={<MentalWellness />} />
-        <Route path="/health-conditions/derma" element={<DermaCare />} />
+      {/* Health Conditions */}
+      <Route path="/health-conditions" element={<HealthCondition />} />
+      <Route path="/health-conditions/bone-joint" element={<BoneJointCare />} />
+      <Route path="/health-conditions/digestive" element={<DigestiveCare />} />
+      <Route path="/health-conditions/eye" element={<EyeCare />} />
+      <Route path="/health-conditions/pain" element={<PainRelief />} />
+      <Route path="/health-conditions/smoking" element={<SmokingCessation />} />
+      <Route path="/health-conditions/liver" element={<LiverCare />} />
+      <Route path="/health-conditions/cold-cough" element={<ColdCough />} />
+      <Route path="/health-conditions/heart" element={<HeartCare />} />
+      <Route path="/health-conditions/kidney" element={<KidneyCare />} />
+      <Route path="/health-conditions/respiratory" element={<RespiratoryCare />} />
+      <Route path="/health-conditions/mental" element={<MentalWellness />} />
+      <Route path="/health-conditions/derma" element={<DermaCare />} />
 
       {/* Vitamins */}
       <Route path="/vitamins" element={<VitaminsPage />} />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" />} />
+
+      {/* Conditional Navigation */}
+      {selectedMedicineId && (
+        <Route
+          path="/redirect"
+          element={<Navigate to={`/buy/${selectedMedicineId}`} replace />}
+        />
+      )}
     </Routes>
 
-    {/* ✅ Navigate after render to avoid React warnings */}
-    {selectedMedicineId && <Navigate to={`/buy/${selectedMedicineId}`} replace />}
-
-    {/* ✅ Search Suggestions */}
+    {/* Search Suggestions */}
     {suggestions.length > 0 && (
       <div className="container search-suggestions-container">
         <h5 className="mb-3 text-primary">

@@ -72,48 +72,46 @@ export const registerUser = async (req, res) => {
 // @desc   Login a user
 // @route  POST /api/auth/login
 // @access Public
+// @desc   Login a user
+// @route  POST /api/auth/login
+// @access Public
 export const loginUser = async (req, res) => {
   console.log("🔐 Login route hit!");
 
   try {
     const { email, password } = req.body;
 
-    // ✅ Sanitize input
     const cleanEmail = email?.trim().toLowerCase();
     const cleanPassword = password?.trim();
 
-    // ✅ Validate input
     if (!cleanEmail || !cleanPassword) {
       return res.status(400).json({ message: "Email and password are required" });
     }
 
-    // ✅ Find user by email
     const user = await User.findOne({ email: cleanEmail });
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // ✅ Compare password
     const isValid = await bcrypt.compare(cleanPassword, user.password);
     if (!isValid) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
 
-    // ✅ Generate JWT token
     const token = jwt.sign(
-      { userId: user._id, role: user.role },
+      { id: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
 
-    console.log(`✅ Logged in user: ${user.userId}`);
+    console.log(`✅ Logged in user: ${user._id}`);
 
-    // ✅ Respond with full user object and token
+    // ✅ Return full user object with MongoDB _id
     res.status(200).json({
       message: "Login successful",
       user: {
-        _id: user._id,
-        userId: user.userId,
+        _id: user._id,               // ✅ This is what Orders.jsx needs
+        userId: user.userId,         // Optional: legacy ID for cart
         name: user.name,
         email: user.email,
         mobile: user.mobile,
@@ -126,3 +124,4 @@ export const loginUser = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+

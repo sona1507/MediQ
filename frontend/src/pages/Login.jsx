@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api/axios";
-import './Login.css';
+import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
@@ -26,7 +26,6 @@ function Login() {
       const user = res.data?.user;
       const token = res.data?.token;
 
-      // ✅ Validate user and token before storing
       if (
         !user ||
         typeof user !== "object" ||
@@ -41,7 +40,7 @@ function Login() {
         return;
       }
 
-      // ✅ Store session
+      // ✅ Store full user object with _id
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", token);
       window.dispatchEvent(new Event("storage"));

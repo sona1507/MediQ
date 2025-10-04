@@ -59,6 +59,13 @@ router.post("/add", async (req, res) => {
 router.get("/user/:id", async (req, res) => {
   const userId = req.params.id;
 
+  if (!userId || typeof userId !== "string") {
+    return res.status(400).json({
+      success: false,
+      message: "Invalid user ID",
+    });
+  }
+
   try {
     const items = await Cart.find({ userId }).populate("productId");
 
@@ -74,9 +81,10 @@ router.get("/user/:id", async (req, res) => {
 
     res.status(200).json({
       success: true,
-      items: formatted, // ✅ This is the structure your frontend expects
+      items: formatted,
     });
   } catch (err) {
+    console.error("🛑 Cart fetch error:", err.message);
     res.status(500).json({
       success: false,
       message: "Failed to fetch cart items",
@@ -85,5 +93,40 @@ router.get("/user/:id", async (req, res) => {
   }
 });
 
+// ✅ DELETE /user/:userId/item/:productId — Remove single item from cart
+router.delete("/user/:userId/item/:productId", async (req, res) => {
+  const { userId, productId } = req.params;
+
+  if (!userId || !productId) {
+    return res.status(400).json({
+      success: false,
+      message: "Missing userId or productId",
+    });
+  }
+
+  try {
+    const result = await Cart.deleteOne({ userId, productId });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Item not found in cart",
+      });
+    }
+
+    console.log(`🗑️ Removed item ${productId} from cart for user ${userId}`);
+    res.json({
+      success: true,
+      message: "Item removed from cart",
+    });
+  } catch (err) {
+    console.error("❌ Failed to remove item:", err.message);
+    res.status(500).json({
+      success: false,
+      message: "Failed to remove item",
+      error: err.message,
+    });
+  }
+});
 
 export default router;
