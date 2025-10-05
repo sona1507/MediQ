@@ -46,6 +46,7 @@ import DermaCare from "./components/healthcondition/DermaCare.jsx";
 import VitaminsPage from "./components/VitaminsPage.jsx";
 import Cart from "./pages/Cart.jsx";
 import Orders from "./pages/Orders.jsx";
+import Ayurveda from "./pages/Ayurveda.jsx";
 
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
@@ -179,7 +180,7 @@ export default function App() {
         <Route path="/cart" element={<Cart user={user} />} />
         <Route path="/orders" element={<Orders user={user} />} />
 <Route path="/orders" element={<Orders user={user} />} />
-
+<Route path="/ayurveda" element={<Ayurveda user={user} />} />
 
         {/* Health Guide */}
         <Route path="/health-guide" element={<HealthGuide />} />
